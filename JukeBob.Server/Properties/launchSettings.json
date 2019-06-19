@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "JukeBox.Desktop.Debug": {
+      "commandName": "Project"
+    }
+  }
+}
