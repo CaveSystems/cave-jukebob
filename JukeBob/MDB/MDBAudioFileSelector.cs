@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2003-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -27,14 +21,6 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using System;
 using System.Collections.Generic;
@@ -120,7 +106,7 @@ namespace JukeBob
 				return null;
             }
 
-            Search listSearch = Search.FieldEquals(nameof(MDBPlayListItem.StreamID), streamID);
+            var listSearch = Search.FieldEquals(nameof(MDBPlayListItem.StreamID), streamID);
             while (true)
             {
                 Func<long> getCount = () => mdb.PlayListItems.Count(listSearch);

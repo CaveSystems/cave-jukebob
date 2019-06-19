@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2003-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -27,14 +21,6 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using System;
 using System.Linq;
@@ -99,7 +85,8 @@ namespace JukeBob
 
 		/// <summary>The duration for all titles of this artist</summary>
 		[Field]
-		public TimeSpan Duration;
+        [TimeSpanFormat(DateTimeType.BigIntTicks)]
+        public TimeSpan Duration;
 
 		/// <summary>The errors found at titles of this artist</summary>
 		[Field]

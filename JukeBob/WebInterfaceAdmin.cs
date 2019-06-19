@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2003-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -27,18 +21,11 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Cave;
 using Cave.Console;
 using Cave.Data;
@@ -176,7 +163,7 @@ namespace JukeBob
 		public void GetArtistsWithoutImage(WebData webData, MDBImageType imageType = 0)
 		{
 			var artists = mdb.Artists.GetStructs();
-			List<RPCArtist> missing = new List<RPCArtist>();
+			var missing = new List<RPCArtist>();
 			foreach (var artist in artists)
 			{
 				var search = Search.FieldEquals(nameof(MDBImage.MusicBrainzGuid), artist.MusicBrainzArtistGuid);
@@ -231,7 +218,7 @@ namespace JukeBob
 		[WebPage(Paths = "/admin/list/files-with-errors", AuthType = WebServerAuthType.Session, AuthData = "Admin")]
 		public void GetFilesWithErrorsList(WebData webData, int page = 0)
 		{
-			Search search = Search.FieldNotEquals(nameof(MDBAudioFile.MetaErrors), MDBMetaErrors.None);
+			var search = Search.FieldNotEquals(nameof(MDBAudioFile.MetaErrors), MDBMetaErrors.None);
 			long rowCount = mdb.AudioFiles.Count(search);
 			var ids = mdb.AudioFiles.FindRows(search, ResultOption.Limit(RowsPerPage) + ResultOption.Offset(page * RowsPerPage));
 			var files = ids.Select(i => RPCAudioFile.Load(mdb, i));
@@ -284,14 +271,15 @@ namespace JukeBob
 		/// <remarks>Returns <see cref="MDBStreamSetting" /></remarks>
 		[WebPage(Paths = "/admin/stream/setting/set", AuthType = WebServerAuthType.Session, AuthData = "Admin")]
 		public void SetStreamSetting(WebData webData, 
-			long streamID, long? subsetID = null, int? titlesPerUser = null, int? minimumTitleCount = null, int? maximumTitleCount = null, 
+			long streamID, int? streamType = null, long? subsetID = null, int? titlesPerUser = null, int? minimumTitleCount = null, int? maximumTitleCount = null, 
 			TimeSpan? minimumLength = null, TimeSpan? maximumLength = null, float? volume = null)
 		{
-			if (streamID != (long)MDBStreamType.JukeBob) throw new ArgumentException("Invalid streamID");
+			if (streamID != 1) throw new ArgumentException("Invalid streamID");
 			lock (mdb.StreamSettings)
 			{
 				var settings = mdb.StreamSettings.TryGetStruct(streamID);
-				if (maximumLength.HasValue) settings.MaximumLength = maximumLength.Value;
+                if (streamType.HasValue) settings.StreamType = (MDBStreamType)streamType.Value;
+                if (maximumLength.HasValue) settings.MaximumLength = maximumLength.Value;
 				if (minimumLength.HasValue) settings.MinimumLength = minimumLength.Value;
 				if (maximumTitleCount.HasValue) settings.MaximumTitleCount = maximumTitleCount.Value;
 				if (minimumTitleCount.HasValue) settings.MinimumTitleCount = minimumTitleCount.Value;
@@ -304,12 +292,12 @@ namespace JukeBob
 			GetStreamSetting(webData, streamID);
 		}
 
-        /// <summary>Gets a specified stream setting.</summary>
-        /// <param name="webData">The web data.</param>
-        /// <param name="streamID">The stream identifier.</param>
-        /// <exception cref="WebServerException">Invalid streamID!</exception>
-        /// <remarks>Returns <see cref="MDBStreamSetting" /></remarks>
-        [WebPage(Paths = "/admin/stream/setting/get", AuthType = WebServerAuthType.Session, AuthData = "Admin")]
+		/// <summary>Gets a specified stream setting.</summary>
+		/// <param name="webData">The web data.</param>
+		/// <param name="streamID">The stream identifier.</param>
+		/// <exception cref="WebException">Invalid streamID!</exception>
+		/// <remarks>Returns <see cref="MDBStreamSetting" /></remarks>
+		[WebPage(Paths = "/admin/stream/setting/get", AuthType = WebServerAuthType.Session, AuthData = "Admin")]
 		public void GetStreamSetting(WebData webData, long streamID)
 		{
 			webData.Result.AddMessage(webData.Method, "Retrieved subset datasets...");
@@ -331,13 +319,13 @@ namespace JukeBob
 			webData.Result.AddStructs(subsets);
 		}
 
-        /// <summary>Updates or creates a subset. If subsetID &lt;= 0 a new subset will be created.</summary>
-        /// <param name="webData">The web data.</param>
-        /// <param name="subsetID">The subset identifier.</param>
-        /// <param name="name">The name.</param>
-        /// <exception cref="WebServerException">Subset does not exist!</exception>
-        /// <remarks>Returns <see cref="MDBSubset"/> (Subsets)</remarks>
-        [WebPage(Paths = "/admin/subset/update", AuthType = WebServerAuthType.Session, AuthData = "Admin")]
+		/// <summary>Updates or creates a subset. If subsetID &lt;= 0 a new subset will be created.</summary>
+		/// <param name="webData">The web data.</param>
+		/// <param name="subsetID">The subset identifier.</param>
+		/// <param name="name">The name.</param>
+		/// <exception cref="WebServerException">Subset does not exist!</exception>
+		/// <remarks>Returns <see cref="MDBSubset"/> (Subsets)</remarks>
+		[WebPage(Paths = "/admin/subset/update", AuthType = WebServerAuthType.Session, AuthData = "Admin")]
 		public void UpdateSubset(WebData webData, long subsetID = 0, string name = null)
 		{
 			MDBSubset subset;
@@ -447,6 +435,7 @@ namespace JukeBob
 
 		/// <summary>Gets the last log log entries.</summary>
 		/// <param name="webData">The web data.</param>
+        /// <param name="minLevel">Minimum loglevel.</param>
 		/// <remarks>Returns <see cref="LogEntry"/></remarks>
 		[WebPage(Paths = "/admin/log", AuthType = WebServerAuthType.Session, AuthData = "Admin")]
 		public void GetLog(WebData webData, LogLevel? minLevel = null)
@@ -454,7 +443,7 @@ namespace JukeBob
 			LogLevel level = minLevel ?? LogLevel.Verbose;
 			webData.Result.AddMessage(webData.Method, "Retrieved logging datasets...");
 			int i = (int)(DateTime.Now.TimeOfDay.Ticks / TimeSpan.TicksPerMillisecond);
-			List<LogEntry> items = new List<LogEntry>();
+			var items = new List<LogEntry>();
 			foreach (var msg in LogCollector.ToArray().Reverse())
 			{
 				if (msg.Level > level) continue;
@@ -474,7 +463,7 @@ namespace JukeBob
 
 				//log stacktrace
 				bool stackTrace = (0 != (LogCollector.ExceptionMode & LogExceptionMode.StackTrace));
-				XT exceptionMessage = msg.Exception.ToXT(stackTrace);
+				var exceptionMessage = msg.Exception.ToXT(stackTrace);
 				//with same level ?
 				if (0 != (LogCollector.ExceptionMode & LogExceptionMode.SameLevel))
 				{

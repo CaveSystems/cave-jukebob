@@ -1,4 +1,28 @@
-﻿using Cave;
+﻿#region License AGPL
+/*
+    This program/library/sourcecode is free software; you can redistribute it
+    and/or modify it under the terms of the GNU Affero General Public License
+    version 3 as published by the Free Software Foundation subsequent called
+    the License.
+
+    You may not use this program/library/sourcecode except in compliance
+    with the License. The License is included in the LICENSE.AGPL30 file
+    found at the installation directory or the distribution package.
+
+    The above copyright notice and this permission notice shall be included
+    in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+    EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+    MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+    NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+    LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+    OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+    WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+#endregion License
+
+using Cave;
 using Cave.Collections.Generic;
 using Cave.Console;
 using Cave.Data;
@@ -12,7 +36,6 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 
@@ -30,7 +53,7 @@ namespace JukeBob
         bool SaveImage(byte[] data, MDBFolder mdbFolder, string name, ref MDBImage image, object obj)
         {
             string fullPath;
-            MDBFile file = new MDBFile()
+            var file = new MDBFile()
             {
                 FolderID = mdbFolder.ID,
                 Name = name,
@@ -59,13 +82,13 @@ namespace JukeBob
             }
 
             int width, height;
-            using (Bitmap32 img = Bitmap32.Create(data))
+            using (var img = Bitmap32.Create(data))
             {
                 width = img.Width; height = img.Height;
                 //save if not present at disk
                 if (!File.Exists(fullPath))
                 {
-                    using (MemoryStream ms = new MemoryStream())
+                    using (var ms = new MemoryStream())
                     {
                         img.Save(ms, imgType, 99);
                         data = ms.ToArray();
@@ -108,7 +131,7 @@ namespace JukeBob
                 this.LogInfo("Saved new image {0}", fullPath);
             }
             //get fileinfo
-            FileInfo fileInfo = new FileInfo(fullPath);
+            var fileInfo = new FileInfo(fullPath);
             //create file dataset
             file.DateTime = fileInfo.LastWriteTimeUtc;
             file.Size = fileInfo.Length;
@@ -152,7 +175,7 @@ namespace JukeBob
             Config = IniReader.FromFile(ConfigFileName);
             if (!Config.HasSection("MusicDataBase"))
             {
-                throw new FileNotFoundException("Missing configuration!");
+                throw new FileNotFoundException($"Missing configuration {ConfigFileName}!", ConfigFileName);
             }
 
             foreach (string folder in Config.ReadSection("MusicFolders", true))
@@ -190,10 +213,6 @@ namespace JukeBob
             {
                 throw new Exception(string.Format("Could not load configuration from {0}", ConfigFileName), ex);
             }
-
-            //force mysql connection load
-            //new MySql.Data.MySqlClient.MySqlConnection().Dispose();
-            Assembly.LoadWithPartialName("MySql.Data");
         }
 
         public MDBHostInformation Host;
@@ -261,7 +280,7 @@ namespace JukeBob
                 return;
             }
 
-            IMemoryTable<T> memoryTable = (IMemoryTable<T>)table;
+            var memoryTable = (IMemoryTable<T>)table;
             lock (m_Tables)
             {
                 //table was updated ? no -> exit
@@ -327,7 +346,7 @@ namespace JukeBob
         {
             string guidData = Base32.Safe.Encode(artist.MusicBrainzArtistGuid.ToArray());
 
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             int i = 0;
             foreach (char c in guidData)
             {
@@ -438,7 +457,7 @@ namespace JukeBob
         {
             get
             {
-                IMemoryTable<MDBPlayListItem> table = PlayListItems as IMemoryTable<MDBPlayListItem>;
+                var table = PlayListItems as IMemoryTable<MDBPlayListItem>;
                 if (table != null)
                 {
                     return table.SequenceNumber;
@@ -537,7 +556,7 @@ namespace JukeBob
                     randomKey = -randomKey;
                 }
 
-                List<MDBImage> result = new List<MDBImage>();
+                var result = new List<MDBImage>();
                 foreach (MDBImageType type in types)
                 {
                     foreach (MDBImage img in images)
@@ -595,7 +614,7 @@ namespace JukeBob
             {
                 if (!Folders.TryGetStruct(Search.FieldEquals(nameof(MDBFolder.Name), fullPath), out folder))
                 {
-                    folder = new MDBFolder() { Name = fullPath, LastChecked = DateTime.UtcNow, };
+                    folder = new MDBFolder() { Name = fullPath, };
                     folder.ID = Folders.Insert(folder);
                     newFolder = true;
                 }
@@ -728,7 +747,7 @@ namespace JukeBob
             }
 
             string fullPath = mdbFolder.GetFullPath(this, fileName);
-            FileInfo fileInfo = new FileInfo(fullPath);
+            var fileInfo = new FileInfo(fullPath);
             long fileSize = fileInfo.Length;
             DateTime fileLastWriteTime = fileInfo.LastWriteTimeUtc;
 
@@ -848,7 +867,7 @@ namespace JukeBob
         /// <exception cref="Exception">Invalid image type!</exception>
         public void SaveArtistImage(MDBFolder folder, string name, MDBImageType imageType, MDBArtist artist, byte[] data)
         {
-            MDBImage image = new MDBImage()
+            var image = new MDBImage()
             {
                 MusicBrainzGuid = artist.MusicBrainzArtistGuid,
                 Type = imageType,
@@ -875,11 +894,11 @@ namespace JukeBob
 
             string artistIniFile = folder.GetFullPath(this, "artist.ini");
             FileSystem.TouchFile(artistIniFile);
-            IniReader ini = IniReader.FromFile(artistIniFile);
+            var ini = IniReader.FromFile(artistIniFile);
 
-            IniWriter writer = new IniWriter(ini);
+            var writer = new IniWriter(ini);
             writer.WriteSetting("Artist", "Guid", artist.MusicBrainzArtistGuid.ToString());
-            Set<string> artists = new Set<string>(ini.ReadSection("Artists"));
+            var artists = new Set<string>(ini.ReadSection("Artists"));
             artists.Include(artist.Name);
             writer.WriteSection("Artists", artists);
             writer.Save();
@@ -894,7 +913,7 @@ namespace JukeBob
         /// <exception cref="Exception">Invalid image type!</exception>
         public void SaveAlbumImage(MDBFolder folder, string name, MDBImageType imageType, MDBAlbum album, byte[] data)
         {
-            MDBImage image = new MDBImage()
+            var image = new MDBImage()
             {
                 MusicBrainzGuid = album.MusicBrainzReleaseGroupGuid,
                 Type = imageType,
@@ -920,7 +939,7 @@ namespace JukeBob
 
             try
             {
-                using (Bitmap32 img = Bitmap32.Create(data))
+                using (var img = Bitmap32.Create(data))
                 {
                     return data;
                 }
@@ -953,7 +972,7 @@ namespace JukeBob
             {
                 try
                 {
-                    HttpConnection http = new HttpConnection
+                    var http = new HttpConnection
                     {
                         Timeout = TimeSpan.FromSeconds(60)
                     };
@@ -1109,6 +1128,7 @@ namespace JukeBob
         public MDBStreamSetting GetStreamSettings(long streamID)
         {
             MDBStreamSetting result = StreamSettings.TryGetStruct(streamID);
+            bool update = false;
             if (result.StreamID != streamID)
             {
                 result.StreamID = streamID;
@@ -1116,21 +1136,28 @@ namespace JukeBob
                 {
                     result.Volume = 1;
                 }
-
-                switch (result.StreamType)
-                {
-                    case MDBStreamType.Silence: break;
-                    case MDBStreamType.JukeBob: if (result.MinimumTitleCount < 1) { result.MinimumTitleCount = 5; } break;
-                    default: throw new NotImplementedException();
-                }
+                update = true;
+            }
+            switch (result.StreamType)
+            {
+                case MDBStreamType.Silence: break;
+                case MDBStreamType.JukeBob: if (result.MinimumTitleCount < 1) { update = true; result.MinimumTitleCount = 5; } break;
+                default: throw new NotImplementedException();
+            }
+            if (update)
+            {
                 StreamSettings.Replace(result);
             }
             return result;
         }
 
+        /// <summary>
+        /// Gets a list of local ip addresses.
+        /// </summary>
+        /// <returns></returns>
         public List<IPAddress> GetLocalAddresses()
         {
-            List<IPAddress> ips = NetTools.GetLocalAddresses().Where(i => i.IsDnsEligible).Select(i => i.Address).Where(ip => !IPAddress.IsLoopback(ip) && !ip.IsIPv6LinkLocal && !ip.IsIPv6Multicast && !ip.IsIPv6Teredo && !ip.IsIPv6SiteLocal).ToList();
+            var ips = NetTools.GetLocalAddresses().Where(i => i.IsDnsEligible).Select(i => i.Address).Where(ip => !IPAddress.IsLoopback(ip) && !ip.IsIPv6LinkLocal && !ip.IsIPv6Multicast && !ip.IsIPv6Teredo && !ip.IsIPv6SiteLocal).ToList();
             ips.Sort(new Comparison<IPAddress>((a, b) =>
                 Comparer<string>.Default.Compare(
                     (a.AddressFamily == AddressFamily.InterNetwork ? " " : "") + a.ToString(),

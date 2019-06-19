@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2005-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -14,14 +8,6 @@
     You may not use this program/library/sourcecode except in compliance
     with the License. The License is included in the LICENSE.AGPL30 file
     found at the installation directory or the distribution package.
-
-    Permission is hereby granted, free of charge, to any person obtaining
-    a copy of this software and associated documentation files (the
-    "Software"), to deal in the Software without restriction, including
-    without limitation the rights to use, copy, modify, merge, publish,
-    distribute, sublicense, and/or sell copies of the Software, and to
-    permit persons to whom the Software is furnished to do so, subject to
-    the following conditions:
 
     The above copyright notice and this permission notice shall be included
     in all copies or substantial portions of the Software.
@@ -35,17 +21,10 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using System;
 using System.IO;
+using System.Reflection;
 using Cave;
 using Cave.Auth;
 using Cave.Data;
@@ -73,9 +52,10 @@ namespace JukeBob
 				//TODO WindowsMediaTimer.Begin();
 			}
             if (Logger.DebugReceiver != null) Logger.DebugReceiver.Mode = LogReceiverMode.Opportune;
+            Assembly.LoadWithPartialName("MySql.Data");
         }
 
-		void SetFtpMusicFolders(MusicDataBase mdb, FtpServer ftpServer)
+        void SetFtpMusicFolders(MusicDataBase mdb, FtpServer ftpServer)
 		{
 			lock (ftpServer.RootFolders)
 			{
@@ -117,7 +97,10 @@ namespace JukeBob
 			{
 				LogConsole.ExceptionMode = LogExceptionMode.Full;
 				LogConsole.Flags |= LogConsoleFlags.DisplayTimeStamp;
+                LogConsole.Mode = LogReceiverMode.Opportune;
 			}
+
+            Logger.DebugReceiver?.Close();
 
 			//init the async mysql connection class we want to use.
 			//new MySql.Data.MySqlClient.MySqlConnection().Dispose();
@@ -126,7 +109,7 @@ namespace JukeBob
 			FtpServer ftpServer = null;
 			MusicDataBase mdb = null;
 			MDBBroadcaster broadcaster = null;
-			OpenALPlayer player = null;
+			DesktopPlayer player = null;
 
 			try
 			{
@@ -191,9 +174,8 @@ namespace JukeBob
 				
 				int ftpPort = mdb.Config.ReadInt32("FtpServer", "Port", 8021);
 				ftpServer.Listen(ftpPort);
-                this.LogInfo("FtpServer listening at <green>{0}", webServer.LocalEndPoints.Join(' '));
 
-                player = new OpenALPlayer(mdb, (long)MDBStreamType.JukeBob);
+				player = new DesktopPlayer(mdb, (long)MDBStreamType.JukeBob);
 				player.Start();
 
 				this.LogInfo("Initializing WebServer...");
@@ -222,9 +204,8 @@ namespace JukeBob
 				//start server
 				int webPort = mdb.Config.ReadInt32("WebServer", "Port", 8080);
 				webServer.Listen(webPort);
-                this.LogInfo("WebServer listening at <green>{0}", webServer.LocalEndPoints.Join(' '));
 
-                mdb.SetHostConfiguration(Environment.UserName + "." + Environment.MachineName, webPort, ftpPort, mdb.GetLocalAddresses());
+				mdb.SetHostConfiguration(Environment.UserName + "." + Environment.MachineName, webPort, ftpPort, mdb.GetLocalAddresses());
 
 				//using (Streamer streamer = new Streamer(mdb, MDBStreamType.JukeBox))
 				broadcaster = new MDBBroadcaster(mdb);

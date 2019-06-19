@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2003-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -27,14 +21,6 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using System;
 using System.Text;
@@ -49,7 +35,7 @@ namespace JukeBob
 	/// <summary>
 	/// Audio File dataset
 	/// </summary>
-	/// <seealso cref="Cave.Text.IXT" />
+	/// <seealso cref="IXT" />
 	[Table("AudioFiles")]
     public struct MDBAudioFile : IXT
     {
@@ -141,7 +127,7 @@ namespace JukeBob
             }
             set
             {
-                Set<string> items = new Set<string>();
+                var items = new Set<string>();
                 foreach (string genre in value)
                 {
                     if (genre.IndexOfAny(new char[] { ';', ',' }) > -1) throw new ArgumentOutOfRangeException("value", "Value may not contain separators!");
@@ -165,7 +151,7 @@ namespace JukeBob
             }
             set
             {
-                Set<string> items = new Set<string>();
+                var items = new Set<string>();
                 foreach (string tag in value)
                 {
                     if (tag.IndexOfAny(new char[] { ';', ',' }) > -1) throw new ArgumentOutOfRangeException("value", "Value may not contain separators!");

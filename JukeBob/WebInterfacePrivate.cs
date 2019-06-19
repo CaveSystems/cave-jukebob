@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2003-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -27,14 +21,6 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using System;
 using System.Collections.Generic;
@@ -70,7 +56,7 @@ namespace JukeBob
 
         string xtToHtml(XT content)
 		{
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 			XTColor color = XTColor.Default;
 			XTStyle style = XTStyle.Default;
 			foreach (XTItem item in content.Items)
@@ -154,7 +140,7 @@ namespace JukeBob
 
 		void FilterList(WebData webData, ITable table, string nameField, string guidField, string text)
 		{
-			Set<long> ids = new Set<long>();
+			var ids = new Set<long>();
 			if (text == null)
 			{
 				ids.IncludeRange(table.FindRows(Search.None, ResultOption.Limit(20)));
@@ -267,7 +253,7 @@ namespace JukeBob
 			}
 
 			MDBAudioFile audioFile = mdb.AudioFiles.TryGetStruct(audioFileID);
-			Set<long> albums = new Set<long>();
+			var albums = new Set<long>();
 			if (audioFileID > 0)
 			{
 				//lookup SongArtistID
@@ -312,14 +298,14 @@ namespace JukeBob
 
 		Search GetCategorySearch(long categoryID)
 		{
-			Set<long> categoryIDs = new Set<long>();
+			var categoryIDs = new Set<long>();
 			categoryIDs.Add(categoryID);
 			//get flat list of all child categories
 			var category = mdb.Categories.TryGetStruct(categoryID);
 			var children = mdb.Categories.GetStructs(nameof(MDBCategory.ParentID), category.ID);
 			for (int i = 0; children.Count > 0 && i < 10; i++)
 			{
-				Set<long> ids = new Set<long>(children.Select(c => c.ID));
+				var ids = new Set<long>(children.Select(c => c.ID));
 				categoryIDs.IncludeRange(ids);
 				children = mdb.Categories.GetStructs(Search.FieldIn(nameof(MDBCategory.ParentID), ids));
 			}

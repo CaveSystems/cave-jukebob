@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2003-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -27,14 +21,6 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using Cave;
 using Cave.Collections.Generic;
@@ -82,7 +68,7 @@ namespace JukeBob
 		/// <returns></returns>
 		MDBFolder GetAlbumFolder(MDBAlbum album)
 		{
-			Set<MDBFolder> paths = new Set<MDBFolder>();
+			var paths = new Set<MDBFolder>();
 			foreach (var audioFile in mdb.AudioFiles.GetStructs(
 				Search.FieldEquals(nameof(MDBAudioFile.AlbumID), album.ID) &
 				Search.FieldEquals(nameof(MDBAudioFile.AlbumArtistID), album.ArtistID)))
@@ -209,7 +195,7 @@ namespace JukeBob
                     string fileNameWithoutExtension = imageType.ToString() + " " + v["id"].Value.ToString();
                     //check if each album has this image, autoload if we already have it at any album
                     byte[] imageData = null;
-                    List<MDBAlbum> albumsWithMissingImages = new List<MDBAlbum>();
+                    var albumsWithMissingImages = new List<MDBAlbum>();
                     FindAlbumImage(albums, fileNameWithoutExtension, out imageData, out albumsWithMissingImages);
                     if (albumsWithMissingImages.Count == 0) continue;
                     //try load from files table
@@ -324,7 +310,7 @@ namespace JukeBob
             foreach (JsonNode v in node.SubNodes)
             {
                 if (string.IsNullOrEmpty(v.Name)) continue;
-                Guid guid = new Guid(v.Name);
+                var guid = new Guid(v.Name);
                 var albums = mdb.Albums.GetStructs(
                     Search.FieldEquals(nameof(MDBAlbum.MusicBrainzAlbumGuid), guid) |
                     Search.FieldEquals(nameof(MDBAlbum.MusicBrainzReleaseGroupGuid), guid));
@@ -480,14 +466,14 @@ namespace JukeBob
                 }
                 writeFile = true;
             }
-            JsonReader reader = new JsonReader(Encoding.UTF8.GetBytes(mbJsonData));
+            var reader = new JsonReader(Encoding.UTF8.GetBytes(mbJsonData));
             if (writeFile) File.WriteAllText(mbJsonFile, mbJsonData);
             return reader;
         }
 
         List<Guid> MusicBrainz_GetReleaseGroups(Guid musicBrainzGuid)
         {
-            List<Guid> validGuids = new List<Guid>();
+            var validGuids = new List<Guid>();
 
             string uri = "http://musicbrainz.org/release-group/" + musicBrainzGuid;
             string path = FileSystem.Combine(mdb.CacheFolder, "MusicBrainz", "Release");

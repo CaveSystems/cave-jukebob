@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2003-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -27,14 +21,6 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using System;
 using System.IO;
@@ -67,7 +53,7 @@ namespace JukeBob
 			{
 				if (searchPacket == null)
 				{
-					IniWriter writer = new IniWriter();
+					var writer = new IniWriter();
 					writer.WriteSetting("MDB", "Version", "4.0");
 					writer.WriteSetting("MDB", "Search", true.ToString());
 					searchPacket = Encoding.UTF8.GetBytes(writer.ToString());
@@ -81,33 +67,38 @@ namespace JukeBob
 		byte[] config;
 		IniWriter writer = new IniWriter();
 		DateTime nextUpdate;
+        DateTime nextSend;
 
-		void SendAnswer(object sender, UdpPacketEventArgs e)
+        void SendAnswer(object sender, UdpPacketEventArgs e)
 		{
 			lock (this)
 			{
-				if (e.Packet.Data.StartsWith("[MDB]"))
-				{
-					IniReader reader = IniReader.Parse("request", e.Packet.Data);
-					bool isSearch = reader.ReadBool("MDB", "Search", false);
-					if (isSearch)
-					{
-						this.LogDebug("Answering search of {0}", e.Packet.RemoteEndPoint);
-						try
-						{
-							if (DateTime.Now > nextUpdate)
-							{
-								UpdateConfig();
-								nextUpdate = DateTime.Now.AddSeconds(10);
-							}
-							sock.Send(config);
-						}
-						catch (Exception ex)
-						{
-							this.LogError(ex, "Could not send broadcast answer to {0}", e.Packet.RemoteEndPoint);
-						}
-					}
-				}
+                if (DateTime.Now > nextSend)
+                {
+                    if (e.Packet.Data.StartsWith("[MDB]"))
+                    {
+                        var reader = IniReader.Parse("request", e.Packet.Data);
+                        bool isSearch = reader.ReadBool("MDB", "Search", false);
+                        if (isSearch)
+                        {
+                            this.LogDebug("Answering search of {0}", e.Packet.RemoteEndPoint);
+                            try
+                            {
+                                if (DateTime.Now > nextUpdate)
+                                {
+                                    UpdateConfig();
+                                    nextUpdate = DateTime.Now.AddSeconds(10);
+                                }
+                                sock.Send(config);
+                                nextSend = DateTime.Now.AddSeconds(1);
+                            }
+                            catch (Exception ex)
+                            {
+                                this.LogError(ex, "Could not send broadcast answer to {0}", e.Packet.RemoteEndPoint);
+                            }
+                        }
+                    }
+                }
 			}
 		}
 
@@ -147,7 +138,6 @@ namespace JukeBob
 		}
 
 		/// <summary>Starts the specified server end points.</summary>
-		/// <param name="serverEndPoints">The server end points.</param>
 		/// <exception cref="Exception">Already started!</exception>
 		/// <exception cref="ObjectDisposedException">Broadcaster</exception>
 		/// <exception cref="ArgumentOutOfRangeException">serverEndPoints - Please define ServerEndpoints!</exception>

@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2003-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -27,14 +21,6 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using System;
 using Cave;
@@ -43,10 +29,10 @@ using Cave.Web;
 
 namespace JukeBob
 {
-	/// <summary>
-	/// The mdb overview 
-	/// </summary>
-	[Table("Overview")]
+    /// <summary>
+    /// The mdb overview 
+    /// </summary>
+    [Table("Overview")]
 	public struct MDBOverview
 	{
 		internal static MDBOverview Create(MusicDataBase mdb, WebServer server)
@@ -54,9 +40,9 @@ namespace JukeBob
 			double fileSize = mdb.Files.Sum(nameof(MDBFile.Size));
 			double audioFilesSize = mdb.Files.Sum(nameof(MDBFile.Size), Search.FieldEquals(nameof(MDBFile.FileType), MDBFileType.mp3));
 			double imageFilesSize = mdb.Files.Sum(nameof(MDBFile.Size), !Search.FieldEquals(nameof(MDBFile.FileType), MDBFileType.mp3) & !Search.FieldEquals(nameof(MDBFile.FileType), MDBFileType.unknown));
-            TimeSpan audiofileDuration = TimeSpan.FromSeconds(Convert.ToDouble(mdb.AudioFiles.Sum(nameof(MDBAudioFile.Duration))));        
+            TimeSpan audiofileDuration = TimeSpan.FromSeconds(Convert.ToDouble(mdb.AudioFiles.Sum(nameof(MDBAudioFile.Duration))));
 
-			return new MDBOverview()
+            return new MDBOverview()
 			{
 				ID = 1 + Math.Abs(mdb.Files.SequenceNumber),
 				LastUpdate = DateTime.Now,
@@ -83,14 +69,16 @@ namespace JukeBob
 
 		/// <summary>The last update date time</summary>
 		[Field]
-		public DateTime LastUpdate;
+        [DateTimeFormat(DateTimeKind.Utc, DateTimeType.BigIntTicks)]
+        public DateTime LastUpdate;
 
         [Field]
         public string Version;
 
 		/// <summary>The all files duration</summary>
 		[Field]
-		public TimeSpan Duration;
+        [TimeSpanFormat(DateTimeType.BigIntTicks)]
+        public TimeSpan Duration;
 
 		/// <summary>The all files duration string</summary>
 		[Field]

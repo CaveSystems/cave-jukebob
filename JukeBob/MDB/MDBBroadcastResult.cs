@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2003-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -27,14 +21,6 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using System;
 using System.Collections.Generic;
@@ -74,7 +60,7 @@ namespace JukeBob
 				size = data.Length;
 			}
 			string content = Encoding.UTF8.GetString(data, 0, size);
-			IniReader reader = IniReader.Parse("mdb", content);
+			var reader = IniReader.Parse("mdb", content);
 			if (reader.ReadSetting("MDB", "Version") != "4.0") return false;
 			result = new MDBBroadcastResult()
 			{
@@ -114,7 +100,7 @@ namespace JukeBob
 					con.Timeout = TimeSpan.FromSeconds(2);
 					Image = con.Download($"http://{server}:{port}/avatar/get?text={Host}");
 				}
-				XmlRequest req = new XmlRequest(new Uri($"http://{server}:{port}/mdb/player/state.xml"));
+				var req = new XmlRequest(new Uri($"http://{server}:{port}/mdb/player/state.xml"));
                 WebMessage msg = req.Get();
 				if (msg.Error == WebError.None)
 				{

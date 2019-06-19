@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2003-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -27,17 +21,10 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -58,7 +45,8 @@ namespace JukeBob
         bool disposed;
 		Dictionary<IPAddress, int> errors = new Dictionary<IPAddress, int>();
 		Thread thread;
-		bool useNetworkInterfaces;
+
+        public bool UseNetworkInterfaces { get; }
 
 		/// <summary>Gets the port.</summary>
 		/// <value>The port.</value>
@@ -76,7 +64,7 @@ namespace JukeBob
 			Port = port;
 			try
 			{
-				useNetworkInterfaces = (NetworkInterface.GetAllNetworkInterfaces().Length > 0);
+                UseNetworkInterfaces = (NetworkInterface.GetAllNetworkInterfaces().Length > 0);
 				sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 				this.LogVerbose("Start listening at port <cyan>{0}<default>.", port);
 				sock.EnableBroadcast = true;
@@ -108,8 +96,8 @@ namespace JukeBob
                     EndPoint ep = new IPEndPoint(addr, Port);
 					if (sock == null) return;
 					int i = sock.ReceiveFrom(buf, ref ep);
-                    Task.Factory.StartNew((packet) => OnReceived((UdpPacket)packet),
-                    new UdpPacket((IPEndPoint)sock.LocalEndPoint, (IPEndPoint)ep, buf, 0, (ushort)i));
+                    var pkt = new UdpPacket((IPEndPoint)sock.LocalEndPoint, (IPEndPoint)ep, buf, 0, (ushort)i);
+                    Task.Factory.StartNew((packet) => OnReceived((UdpPacket)packet), pkt);
                 }
                 catch (Exception ex)
                 {
@@ -140,7 +128,7 @@ namespace JukeBob
 			try
 			{
 				SendClassicBroadcast(packet);
-				if (useNetworkInterfaces) SendInterfaceBroadcast(packet);
+				if (UseNetworkInterfaces) SendInterfaceBroadcast(packet);
 			}
 			catch (Exception ex)
 			{
@@ -149,6 +137,19 @@ namespace JukeBob
 				Close();
 			}
 		}
+
+        public void SendTo(IPEndPoint target, byte[] packet)
+        {
+            if (sock == null) return;
+            try
+            {
+                sock.SendTo(packet, target);
+            }
+            catch (Exception ex)
+            {
+                this.LogWarning(ex, "Error sending answer...");
+            }
+        }
 
 		private void SendInterfaceBroadcast(byte[] packet)
 		{
@@ -171,6 +172,7 @@ namespace JukeBob
 					if (GetError(addr) >= 5) return;
 					try
 					{
+                        Trace.WriteLine($"Send broadcast packet to {addr}");
 						sock?.SendTo(packet, new IPEndPoint(addr, Port));
 					}
 					catch (Exception ex)
@@ -189,7 +191,8 @@ namespace JukeBob
 			if (GetError(addr) >= 5) return;
 			try
 			{
-				sock.SendTo(packet, new IPEndPoint(addr, Port));
+                Trace.WriteLine($"Send broadcast packet to {addr}");
+                sock.SendTo(packet, new IPEndPoint(addr, Port));
 			}
 			catch (Exception ex)
 			{

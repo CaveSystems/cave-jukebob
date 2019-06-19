@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2003-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -27,14 +21,6 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using System;
 using System.Collections.Generic;
@@ -334,13 +320,13 @@ namespace JukeBob
 			webData.Result.AddMessage(webData.Method, WebError.NotFound, "Image {0} cannot be found!", imageID);
 		}
 
-        /// <summary>Retrieves a list of all images matching the specified criteria.</summary>
-        /// <param name="webData">The web data.</param>
-        /// <param name="albumID">The album identifier.</param>
-        /// <param name="artistID">The artist identifier.</param>
-        /// <exception cref="WebServerException">Please specify albumID or artistID!</exception>
-        /// <remarks>Returns <see cref="MDBImage"/> (Images)</remarks>
-        [WebPage(Paths = "/mdb/image/search")]
+		/// <summary>Retrieves a list of all images matching the specified criteria.</summary>
+		/// <param name="webData">The web data.</param>
+		/// <param name="albumID">The album identifier.</param>
+		/// <param name="artistID">The artist identifier.</param>
+		/// <exception cref="WebException">Please specify albumID or artistID!</exception>
+		/// <remarks>Returns <see cref="MDBImage"/> (Images)</remarks>
+		[WebPage(Paths = "/mdb/image/search")]
 		public void SearchImage(WebData webData, long albumID = 0, long artistID = 0)
 		{
 			IList<MDBImage> images;
@@ -446,7 +432,7 @@ namespace JukeBob
 			var pseudoRandom = (DateTime.UtcNow.Ticks / TimeSpan.TicksPerMinute).GetHashCode();
 
 			MDBAlbum album;
-			MDBAudioFile audioFile = default(MDBAudioFile);
+			var audioFile = default(MDBAudioFile);
 			IList<MDBImage> images = null;
 
 			if (albumID == 0)
@@ -530,34 +516,34 @@ namespace JukeBob
 			webData.Answer.Headers.Add("MDBReplacementImage", "NotAvailable");
 			webData.Answer.SetCacheTime(TimeSpan.FromDays(1));
 		}
-        #endregion
+		#endregion
 
-        // ---------------------------------------------- /mdb/audiofiles
+		// ---------------------------------------------- /mdb/audiofiles
 
-        #region /mdb/audiofile
-        /// <summary>Searches for audio files matching the specified criteria.</summary>
-        /// <param name="webData">The web data.</param>
-        /// <param name="page">The page.</param>
-        /// <param name="artistID">The artist identifier.</param>
-        /// <param name="albumID">The album identifier.</param>
-        /// <param name="categoryID">The category identifier.</param>
-        /// <param name="genreID">The genre identifier.</param>
-        /// <param name="tagID">The tag identifier.</param>
-        /// <param name="filter">The filter.</param>
-        /// <param name="title">The title.</param>
-        /// <param name="album">The album.</param>
-        /// <param name="artist">The artist.</param>
-        /// <param name="genre">The genre.</param>
-        /// <param name="tag">The tag.</param>
-        /// <exception cref="WebServerException">
-        /// Please use title or filter, not both!
-        /// or
-        /// Cannot use artist search and artistID at the same time!
-        /// or
-        /// Cannot use album search and albumID at the same time!
-        /// </exception>
-        /// <remarks>Returns <see cref="RPCAudioFile"/> (AudioFiles)</remarks>
-        [WebPage(Paths = "/mdb/audiofile/search")]
+		#region /mdb/audiofile
+		/// <summary>Searches for audio files matching the specified criteria.</summary>
+		/// <param name="webData">The web data.</param>
+		/// <param name="page">The page.</param>
+		/// <param name="artistID">The artist identifier.</param>
+		/// <param name="albumID">The album identifier.</param>
+		/// <param name="categoryID">The category identifier.</param>
+		/// <param name="genreID">The genre identifier.</param>
+		/// <param name="tagID">The tag identifier.</param>
+		/// <param name="filter">The filter.</param>
+		/// <param name="title">The title.</param>
+		/// <param name="album">The album.</param>
+		/// <param name="artist">The artist.</param>
+		/// <param name="genre">The genre.</param>
+		/// <param name="tag">The tag.</param>
+		/// <exception cref="WebException">
+		/// Please use title or filter, not both!
+		/// or
+		/// Cannot use artist search and artistID at the same time!
+		/// or
+		/// Cannot use album search and albumID at the same time!
+		/// </exception>
+		/// <remarks>Returns <see cref="RPCAudioFile"/> (AudioFiles)</remarks>
+		[WebPage(Paths = "/mdb/audiofile/search")]
 		public void SearchAudioFiles(WebData webData, int page = 0, long artistID = 0, long albumID = 0, long categoryID = 0, long genreID = 0, long tagID = 0,
 			string filter = null, string title = null, string album = null, string artist = null, string genre = null, string tag = null)
 		{
@@ -635,7 +621,7 @@ namespace JukeBob
 				myHash = nowPlaying.GetHashCode() ^ mdb.PlayListSequenceNumber ^ -1;
 			}
 
-			List<MDBPlayListItem> playList = new List<MDBPlayListItem>();
+			var playList = new List<MDBPlayListItem>();
 			playList.AddRange(mdb.PlayListItems.GetStructs(
 				Search.FieldEquals(nameof(MDBPlayListItem.StreamID), streamID) & Search.FieldGreater(nameof(MDBPlayListItem.OwnerID), 0), 
 				ResultOption.SortAscending(nameof(MDBPlayListItem.Added))));

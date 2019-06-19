@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2003-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -27,14 +21,6 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using System;
 using System.Collections.Generic;
@@ -126,36 +112,36 @@ namespace JukeBob
 
 				case MDBUpdateType.NoChange:
 				{
-					if (mdbFile.IsImage)
-					{
+                    if (mdbFile.IsImage)
+                    {
                         if (!mdb.Images.Exist(nameof(MDBImage.FileID), mdbFile.ID))
                         {
                             updateType = MDBUpdateType.New;
                             goto case MDBUpdateType.New;
                         }
-					}
-					else
-					{
+                    }
+                    else
+                    {
                         if (!mdb.AudioFiles.Exist(nameof(MDBAudioFile.FileID), mdbFile.ID))
                         {
                             updateType = MDBUpdateType.New;
                             goto case MDBUpdateType.New;
                         }
-					}
-					break;
-				}
+                    }
+                    break;
+                }
 				case MDBUpdateType.New:
 				case MDBUpdateType.Updated:
 				{
-                    if (mdbFile.IsImage)
-                    {
-                        try { updateType = CheckImageFile(mdbFile, fullPath); }
-                        catch (Exception ex)
-                        {
-                            this.LogWarning(ex, "Could not update image file {0}.", fullPath);
-                            mdb.Images.TryDelete(nameof(MDBImage.FileID), mdbFile.ID);
-                        }
-                    }
+					if (mdbFile.IsImage)
+					{
+						try { updateType = CheckImageFile(mdbFile, fullPath); }
+						catch (Exception ex)
+						{
+							this.LogWarning(ex, "Could not update image file {0}.", fullPath);
+							mdb.Images.TryDelete(nameof(MDBImage.FileID), mdbFile.ID);
+						}
+					}
                     else if (mdbFile.FileType == MDBFileType.mp3)
                     {
                         updateType = CheckMusicFile(mdbFile, fullPath);
@@ -165,8 +151,8 @@ namespace JukeBob
                         this.LogInfo("Removed file '<red>{0}<default>' reason: unknown file type", mdbFile);
                         RemoveFile(mdbFile.ID);
                     }
-					break;
-				}
+                    break;
+                }
 				default: throw new NotImplementedException();
 			}
 			FileIndexed?.Invoke(this, new MDBFileIndexedEventArgs(updateType, mdbFile));
@@ -205,7 +191,7 @@ namespace JukeBob
 		{
 			if (mdbFile.ID <= 0) throw new InvalidDataException();
 
-			MDBImage mdbImageFile = new MDBImage();
+			var mdbImageFile = new MDBImage();
 			mdbImageFile.FileID = mdbFile.ID;
 
 			MDBUpdateType result;
@@ -248,7 +234,7 @@ namespace JukeBob
 				}
 				var audioFiles = mdb.AudioFiles.GetStructs(Search.FieldIn(nameof(MDBAudioFile.FileID), files.Select(f => f.ID)));
 				var albums = mdb.Albums.GetStructs(new Set<long>(audioFiles.Select(a => a.AlbumID)));
-				Set<BinaryGuid> guids = new Set<BinaryGuid>(albums.Where(a => a.MusicBrainzReleaseGroupGuid != null).Select(a => a.MusicBrainzReleaseGroupGuid));
+				var guids = new Set<BinaryGuid>(albums.Where(a => a.MusicBrainzReleaseGroupGuid != null).Select(a => a.MusicBrainzReleaseGroupGuid));
 				switch (guids.Count())
 				{
 					case 0:
@@ -268,7 +254,7 @@ namespace JukeBob
 				//get artist guid from ini // could read this from path too...
 				string path = FileSystem.Combine(fullPath, "..", "artist.ini");
 				var ini = IniReader.FromFile(path);
-				Guid artistGuid = new Guid(ini.ReadSetting("Artist", "Guid"));
+				var artistGuid = new Guid(ini.ReadSetting("Artist", "Guid"));
 
 				//new image ?
 				MDBImage oldImage;
@@ -303,27 +289,27 @@ namespace JukeBob
 				}
 			}
 
-			MDBArtist albumArtist = new MDBArtist();
-			MDBArtist titleArtist = new MDBArtist();
-			MDBAlbum album = new MDBAlbum();
-			MDBGenre genre = new MDBGenre();
-			MDBTag tag = new MDBTag();
+			var albumArtist = new MDBArtist();
+			var titleArtist = new MDBArtist();
+			var album = new MDBAlbum();
+			var genre = new MDBGenre();
+			var tag = new MDBTag();
 
 			audioFile.FileID = mdbFile.ID;
 			audioFile.CategoryID = mdbCategory.ID;
 			audioFile.Errors = 0;
 			audioFile.MetaErrors = 0;
 
-			Set<string> genres = new Set<string>();
-			Set<string> tags = new Set<string>();
+			var genres = new Set<string>();
+			var tags = new Set<string>();
 
 			this.LogDebug("Reading data of {0}", mdbFile);
 			var data = File.ReadAllBytes(fullPath);
 			mdb.Files.Replace(mdbFile);
 
-			using (MemoryStream ms = new MemoryStream(data))
+			using (var ms = new MemoryStream(data))
 			{
-				MP3Reader reader = new MP3Reader(ms);
+				var reader = new MP3Reader(ms);
 				reader.Name = mdbFile.ToString();
 
 				TimeSpan duration = TimeSpan.Zero;
@@ -340,7 +326,7 @@ namespace JukeBob
 					}
 					else if (frame is ID3v1)
 					{
-						ID3v1 id3v1 = frame as ID3v1;
+						var id3v1 = frame as ID3v1;
 						if (!string.IsNullOrEmpty(id3v1.Genre))
 						{
 							if (string.IsNullOrEmpty(genre.Name)) genre.Name = id3v1.Genre;
@@ -361,7 +347,7 @@ namespace JukeBob
 					}
 					else if (frame is ID3v2)
 					{
-						ID3v2 id3v2 = frame as ID3v2;
+						var id3v2 = frame as ID3v2;
 
 						if (string.IsNullOrEmpty(genre.Name) & !string.IsNullOrEmpty(id3v2.Group))
 						{
@@ -520,7 +506,7 @@ namespace JukeBob
 
 		MDBCategory GetCategory(string path)
 		{
-			MDBCategory result = new MDBCategory { Name = "Undefined" };
+			var result = new MDBCategory { Name = "Undefined" };
 			if (path.EndsWith("..")) return result;
 
 			lock (mdb.Categories)
@@ -529,7 +515,7 @@ namespace JukeBob
 				string file = FileSystem.Combine(path, "mdb.ini");
 				if (File.Exists(file))
 				{
-					IniReader reader = IniReader.FromFile(file);
+					var reader = IniReader.FromFile(file);
 					result.Name = reader.ReadSetting("Category", "Name");
 					string parentName = reader.ReadSetting("Category", "Parent");
 					if (!string.IsNullOrEmpty(parentName))
@@ -568,26 +554,26 @@ namespace JukeBob
 			return exists;
 		}
 
-		bool CheckFileExist(MDBFile file)
-		{
-			bool exists = false;
-			try
-			{
-				if (mdb.Folders.TryGetStruct(file.FolderID, out var folder) && CheckFolderExist(folder))
-				{
-					string fullPath = file.GetFullPath(mdb);
-					exists = File.Exists(fullPath);
-				}
-			}
-			catch (Exception ex)
-			{
-				this.LogWarning(ex.Message);
-				exists = false;
-			}
-			return exists;
-		}
+        bool CheckFileExist(MDBFile file)
+        {
+            bool exists = false;
+            try
+            {
+                if (mdb.Folders.TryGetStruct(file.FolderID, out var folder) && CheckFolderExist(folder))
+                {
+                    string fullPath = file.GetFullPath(mdb);
+                    exists = File.Exists(fullPath);
+                }
+            }
+            catch (Exception ex)
+            {
+                this.LogWarning(ex.Message);
+                exists = false;
+            }
+            return exists;
+        }
 
-		void AddNewFiles()
+        void AddNewFiles()
 		{
 			float count = mdb.Folders.RowCount;
 			this.LogInfo("Searching music files at <green>{0}<default> folders", count);
@@ -655,7 +641,7 @@ namespace JukeBob
 		void CheckDirectories()
 		{
 			DateTime start = DateTime.UtcNow;
-			EndlessProgress p = new EndlessProgress(mdb.Folders.RowCount + 1000);
+			var p = new EndlessProgress(mdb.Folders.RowCount + 1000);
 			foreach (var rootFolder in rootFolders)
 			{
                 CheckDirectory(rootFolder, p);
@@ -664,7 +650,7 @@ namespace JukeBob
 			taskList.WaitAll();
 
 			//clean folders
-			var folders = mdb.Folders.GetStructs(Search.FieldSmaller(nameof(MDBFolder.LastChecked), start - TimeSpan.FromSeconds(1)));
+			var folders = mdb.Folders.GetStructs(Search.FieldSmaller(nameof(MDBFolder.LastChecked), start));
 			foreach(var folder in folders)
 			{
 				if (exit) break;
@@ -756,8 +742,8 @@ namespace JukeBob
 			float allRowsCount = mdb.Tags.RowCount + mdb.Genres.RowCount + mdb.Artists.RowCount + mdb.Albums.RowCount + mdb.AudioFiles.RowCount + mdb.Images.RowCount;
 			long value = 0;
 
-            #region cleanup no longer present audiofiles 
-            this.LogInfo("Cleanup '<yellow>{0}<default>' AudioFiles...", mdb.AudioFiles.RowCount);
+			#region cleanup no longer present audiofiles 
+			this.LogInfo("Cleanup '<yellow>{0}<default>' AudioFiles...", mdb.AudioFiles.RowCount);
 			foreach (var audioFile in mdb.AudioFiles.GetStructs())
 			{
 				if (exit) return;
@@ -941,9 +927,9 @@ namespace JukeBob
 
 		void CleanupImageFile(MDBImage image)
 		{
-			if (!mdb.Files.TryGetStruct(image.FileID, out MDBFile file) || !CheckFileExist(file))
+            if (!mdb.Files.TryGetStruct(image.FileID, out MDBFile file) || !CheckFileExist(file))
             {
-				this.LogInfo("<red>Removed<default> image file '{0}'", image);
+                this.LogInfo("<red>Removed<default> image file '{0}'", image);
 				mdb.Images.TryDelete(nameof(MDBAudioFile.FileID), image.FileID);
 				mdb.Files.TryDelete(nameof(MDBFile.ID), image.FileID);
 				return;
@@ -953,8 +939,8 @@ namespace JukeBob
 		void CleanupAudioFile(MDBAudioFile audioFile)
 		{
             if (!mdb.Files.TryGetStruct(audioFile.FileID, out MDBFile file) || !CheckFileExist(file))
-			{
-				this.LogInfo("<red>Removed<default> audio file '{0}'", audioFile);
+            {
+                this.LogInfo("<red>Removed<default> audio file '{0}'", audioFile);
 				mdb.AudioFiles.TryDelete(nameof(MDBAudioFile.FileID), audioFile.FileID);
 				mdb.Files.TryDelete(nameof(MDBFile.ID), audioFile.FileID);
 				return;
@@ -1087,9 +1073,7 @@ namespace JukeBob
 
 		#region public properties
 
-        /// <summary>
-        /// Name of the Crawler
-        /// </summary>
+        /// <inheritdoc/>
 		public override string Name => "FileCrawler";
 
 		/// <summary>Gets the name of the log source.</summary>

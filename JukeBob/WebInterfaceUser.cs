@@ -1,10 +1,4 @@
-﻿#region CopyRight 2017
-/*
-    Copyright (c) 2003-2017 Andreas Rohleder (andreas@rohleder.cc)
-    All rights reserved
-*/
-#endregion
-#region License AGPL
+﻿#region License AGPL
 /*
     This program/library/sourcecode is free software; you can redistribute it
     and/or modify it under the terms of the GNU Affero General Public License
@@ -27,14 +21,6 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 #endregion License
-#region Authors & Contributors
-/*
-   Author:
-     Andreas Rohleder <andreas@rohleder.cc>
-
-   Contributors:
- */
-#endregion Authors & Contributors
 
 using System;
 using System.Net;
@@ -53,7 +39,7 @@ namespace JukeBob
 		/// <param name="webData">The web data.</param>
 		/// <param name="audioFileID">The audio file identifier.</param>
 		/// <param name="streamID">The stream identifier.</param>
-		/// <exception cref="WebServerException">Song was already added to playlist!
+		/// <exception cref="WebException">Song was already added to playlist!
 		/// or</exception>
 		[WebPage(Paths = "/mdb/playlist/add", AuthType = WebServerAuthType.Session)]
 		public void AddToPlaylist(WebData webData, long audioFileID, long streamID = 0)
@@ -81,7 +67,7 @@ namespace JukeBob
 					);
 				if (exist) throw new WebServerException(WebError.DatasetAlreadyPresent, "Title is already present at playlist!");
 
-				MDBPlayListItem item = new MDBPlayListItem()
+				var item = new MDBPlayListItem()
 				{
 					AudioFileID = audioFileID,
 					StreamID = streamID,
@@ -105,7 +91,7 @@ namespace JukeBob
 		[WebPage(Paths = "/mdb/playlist/remove", AuthType = WebServerAuthType.Session)]
 		public void RemoveFromPlaylist(WebData webData, long playlistItemID)
 		{
-			MDBUserLevel userLevel = (MDBUserLevel)webData.Session.GetUser().AuthLevel;
+			var userLevel = (MDBUserLevel)webData.Session.GetUser().AuthLevel;
 			long ownerID = CaveSystemData.CalculateID(webData.Request.SourceAddress);
 			if (ownerID > 0) ownerID = -ownerID;
 
