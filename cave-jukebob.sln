@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2041
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JukeBob", "JukeBob\JukeBob.csproj", "{E4536953-04B5-4525-A393-859779DB2BDE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JukeBob.Server", "JukeBob.Server\JukeBob.Server.csproj", "{AE83AB6F-442F-47C2-AB48-9BD5CBBE1E5C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E4536953-04B5-4525-A393-859779DB2BDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4536953-04B5-4525-A393-859779DB2BDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4536953-04B5-4525-A393-859779DB2BDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4536953-04B5-4525-A393-859779DB2BDE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE83AB6F-442F-47C2-AB48-9BD5CBBE1E5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE83AB6F-442F-47C2-AB48-9BD5CBBE1E5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE83AB6F-442F-47C2-AB48-9BD5CBBE1E5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE83AB6F-442F-47C2-AB48-9BD5CBBE1E5C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E4FA184C-E6D7-4A6F-8B88-2977DDEC9EA0}
+	EndGlobalSection
+EndGlobal
