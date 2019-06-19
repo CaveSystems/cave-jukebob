@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- /parts/head.html -->
+    <title>JukeBob Crawler</title>
+</head>
+
+<body>
+<!-- /parts/admin-nav.html -->
+<script data-cave-template="main" type="text/x-handlebars-template">
+	<div class="container-fluid">
+		{{#if Progress}}
+		<div class="card mt-3 jb-bg-danger-5">
+			<div class="card-header jb-bg-danger-5 text-light">
+				<div class="row">
+					<div class="col">
+						<h5 class="">JukeBob Crawler - {{State.State}}</h5>
+					</div>
+					<div class="col-auto float-right">
+						<span class="btn btn-danger" data-cave-click="changeCrawler,mode=stop"><i class='fa fa-power-off'></i> stop crawler</span>
+					</div>
+				</div>
+			</div>
+			<div class="card-body jb-bg-light-5">
+				<div class="row">
+					<div class='col' style="min-width: 50vw;">
+						<div class='row'>
+							{{#each Progress}}
+							<!-- todo if progress == 1 hide -->
+							<div class='col-6 col-md-4 p-1'>
+								<div class='row'>
+									<div class='col mt-auto'>
+										{{this.Type}}
+									</div>
+								</div>
+								<div class='row'>
+									<div class='col'>
+										<div class="progress progress-bar-block">
+											<div class="progress-bar bg-danger {{this.Animated}}" role="progressbar"
+												 aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"
+												 style="width: {{this.Percent}}%;"></div>
+										</div>
+										<b class="progress-value progress-value-center" style="color: #dddddd">{{this.PercentText}}%</b>
+									</div>
+								</div>
+							</div>
+							{{/each}}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		{{else}}
+		<div class="card mt-3 jb-bg-primary-5">
+			<div class="card-header jb-bg-primary-5 text-light">
+				<h5 class="">JukeBob Crawlers</h5>
+			</div>
+
+			<div class="card-body jb-bg-light-5">
+				<div class="row">
+                    {{#if Crawlers.FileCrawler}}
+					<div class='col-auto p-1'>
+						<span class="btn btn-primary jb-bg-primary-5 btn-block" data-cave-click="changeCrawler,mode=file"><i class='fa fa-3x fa-file-audio'></i><br/><b>file</b> crawler</span>
+					</div>
+                    {{/if}}
+                    {{#if Crawlers.ArtCrawler}}
+					<div class='col-auto p-1'>
+						<span class="btn btn-primary jb-bg-primary-5 btn-block" data-cave-click="changeCrawler,mode=art"><i class='fa fa-3x fa-file-image'></i><br/><b>art</b> crawler</span>
+					</div>
+                    {{/if}}
+				</div>
+			</div>
+		</div>
+		{{/if}}
+    </div>
+</script>
+<!-- /parts/scripts.html -->
+<script>
+    jukeBob.ajaxDone = function (data) {
+        L('fill Template');
+        CaveJSON.parseNewData(data.CaveJSON);
+        jukeBob.fillTemplate('main');
+        jukeBob.setCrawlerUpdate();
+    };
+
+    jukeBob.setCrawlerUpdate = function () {
+        if ((CaveJSON.State && CaveJSON.State.isRunning)) {
+            if (jukeBob.interval === undefined) {
+                jukeBob.interval = setInterval(function () {
+                    jukeBob.doAjax({
+                        url: '/admin/crawler/state.json',
+                        success: jukeBob.ajaxDone,
+                        error: function () {
+                            clearInterval(jukeBob.interval);
+                            jukeBob.interval = undefined;
+                        }
+                    })
+                }, 1000)
+            }
+        } else {
+            if (jukeBob.interval) {
+                clearInterval(jukeBob.interval);
+                jukeBob.interval = undefined;
+            }
+        }
+    };
+
+
+    jukeBob.changeCrawler = function (e) {
+        L('Change Crawler');
+        if (e && e.params && e.params.mode) {
+            if (e.params.mode === 'stop') {
+                jukeBob.doAjax({
+                    url: '/admin/crawler/stop.json',
+                    success: jukeBob.ajaxDone
+                })
+            } else {
+                jukeBob.doAjax({
+                    url: '/admin/crawler/start.json',
+                    success: jukeBob.ajaxDone,
+                    data: {
+                        crawlerType: e.params.mode
+                    }
+                });
+            }
+        }
+    };
+
+    jukeBob.renderPage();
+    if (!(CaveJSON.Params && CaveJSON.Params.debug)) {
+        jukeBob.setCrawlerUpdate();
+    }
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- /parts/head.html -->
+    <title>JukeBob Global Settings</title>
+</head>
+
+<body>
+<!-- /parts/admin-nav.html -->
+<script data-cave-template="main" type="text/x-handlebars-template">
+	<div class="container-fluid" id="content">
+		<div class="card mt-3 jb-bg-primary-5">
+			<h5 class="card-header text-light jb-bg-primary-5 text-light">JukeBob system globals</h5>
+			<div class="card-body jb-bg-light-5">
+				<form id="setSettings">
+					<input type="hidden" name="streamID" value="{{StreamSettings.0.StreamID}}">
+					<div class="row mb-3">
+						<div class='col-12 col-sm-6 col-md-4 mb-2'>
+							<label for="titlesPerUserInput">Titles per User</label>
+							<input type="text" class="form-control" name="titlesPerUser" id="titlesPerUserInput" value="{{StreamSettings.0.TitlesPerUser}}">
+							<small class="form-text text-muted">maximum Titles a user can wish at any time</small>
+						</div>
+						<div class='col-12 col-sm-6 col-md-4 mb-2'>
+							<label for="minimumTitleCountInput">minimum title count</label>
+							<input type="text" class="form-control" name="minimumTitleCount" id="minimumTitleCountInput"
+								   value="{{StreamSettings.0.MinimumTitleCount}}">
+							<small class="form-text text-muted">minimum title count in the playlist</small>
+						</div>
+						<div class='col-12 col-sm-6 col-md-4 mb-2'>
+							<label for="maximumTitleCountInput">maximum Title count</label>
+							<input type="text" class="form-control" name="maximumTitleCount" id="maximumTitleCountInput"
+								   value="{{StreamSettings.0.MaximumTitleCount}}">
+							<small class="form-text text-muted">maximum title count in the playlist</small>
+						</div>
+						<div class='col-12 col-sm-6 col-md-4 mb-2'>
+							<label for="minimumLengthInput">minimum title length</label>
+							<input type="text" class="form-control" name="minimumLength" id="minimumLengthInput"
+								   value="{{StreamSettings.0.MinimumLengthStr}}">
+							<small class="form-text text-muted">minimum length a title can have to be played</small>
+						</div>
+						<div class='col-12 col-sm-6 col-md-4 mb-2'>
+							<label for="maximumLengthInput">maximum title length</label>
+							<input type="text" class="form-control" name="maximumLength" id="maximumLengthInput"
+								   value="{{StreamSettings.0.MaximumLengthStr}}">
+							<small class="form-text text-muted">maximum length a title can have to be played</small>
+						</div>
+						<div class='col-12 col-sm-6 col-md-4 mb-2'>
+							<label for="volumeInput">Volume</label>
+							<input type="text" class="form-control" name="volume" id="volumeInput"
+								   value="{{StreamSettings.0.Volume}}">
+                            <input type="range" class="form-control" id="volRange" min="0" max="1" step="0.01" value="{{StreamSettings.0.Volume}}">
+							<small class="form-text text-muted">set audio volume (0.0 - 1.0)</small>
+						</div>
+						<div class='col-auto mb-2 mt-auto ml-auto'>
+							<button type="submit" class="btn btn-primary jb-bg-primary-5" id="setSettingsBtn">Update</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<!--
+		<div class="card mt-3 jb-bg-danger-7">
+			<h5 class="card-header text-light jb-bg-danger-7 text-light">JukeBob host settings</h5>
+			<div class="card-body jb-bg-light-5">
+				<form id="hostSettings">
+					<input type="hidden" name="streamID" value="{{Volume.0.StreamID}}">
+					<div class="row mb-3">
+						<div class='col-12 col-md-4 mb-2'>
+							<label for="volumeInput">Volume</label>
+							<input type="text" class="form-control" name="volume" id="hostNameInput"
+								   value="{{Host.0.Volume}}">
+							<small class="form-text text-muted">set audio volume (0.0 - 1.0)</small>
+						</div>
+						<div class='col-auto mb-2 mt-auto ml-auto'>
+							<button type="submit" class="btn btn-danger" id="setHostSettingsBtn">Update Host</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		-->
+	</div>
+</script>
+<!-- /parts/scripts.html -->
+<script>
+    jukeBob.onRenderDone = function () {
+        $('#setSettings').off('submit').on('submit', function (e) {
+            L('Settings');
+            e.preventDefault();
+            const formData = jukeBob.formDataToObject($(this).serializeArray());
+            L(formData);
+            jukeBob.doAjax({
+                url: '/admin/stream/setting/set.json',
+                type: 'POST',
+                data: formData,
+                success: function (data) {
+                    toastr.success('Settings set.', 'JukeBob');
+                    CaveJSON.parseNewData(data.CaveJSON);
+                    jukeBob.fillTemplate('main');
+                    jukeBob.onRenderDone();
+                }
+            });
+            return false;
+        });
+
+        $('#hostSettings').off('submit').on('submit', function (e) {
+            e.preventDefault();
+            const formData = jukeBob.formDataToObject($(this).serializeArray());
+            jukeBob.doAjax({
+                url: '/admin/volume/set.json',
+                type: 'POST',
+                data: formData,
+                success: function (data) {
+                    toastr.success('Host Settings set.', 'JukeBob');
+                    CaveJSON.parseNewData(data.CaveJSON);
+                    jukeBob.fillTemplate('main');
+                    jukeBob.onRenderDone();
+                }
+            });
+            return false;
+        });
+
+        $('#volRange').off('input').on('input', function (e) {
+            //L(this);
+            $('#volumeInput').val(this.value);
+        })
+    };
+
+    jukeBob.renderPage(jukeBob.onRenderDone);
+</script>
+</body>
+
+</html>

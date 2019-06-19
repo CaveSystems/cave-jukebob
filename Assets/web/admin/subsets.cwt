@@ -1,0 +1,13 @@
+[CaveWebTemplate]
+Version=1
+
+[Functions]
+/auth/session
+/mdb/player/state
+/admin/stream/settings
+/admin/subset/list
+
+[Content]
+/parts/head.html
+/parts/admin-nav.html
+/parts/scripts.html

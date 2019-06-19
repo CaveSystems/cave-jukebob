@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<!-- /parts/head.html -->
+	<title>JukeBob</title>
+</head>
+
+<body>
+<!-- /parts/navigation.html -->
+<div class="container-fluid jb-bg-smoke-7 jb-main">
+	<script data-cave-template="main" type="text/x-handlebars-template">
+		{{#if NowPlaying.isPlaying}}
+		<div class="row">
+			<!--nur xs-->
+			<div class="col-12 d-block d-sm-none p-1 pb-0">
+				<div class='jb-primary-container'>
+					<div class="row px-0 py-3 m-0">
+						<div class="col-12">
+							<div class="row flex-row-reverse">
+								<div class="col-4">
+									<img class="img-fluid" style="max-height: 60vh;" src="/mdb/image/album/get?audioFileID={{NowPlaying/AudioFileID}}"/>
+								</div>
+								<div class="col-8">
+									<a href="/audiofiles?f={{NowPlaying.UrlTitle}}" class="text-light"><h4>
+										<span class="fas fa-music"></span>&nbsp;{{NowPlaying.Title}}</h4></a>
+									<a href="/audiofiles?a={{NowPlaying.Artist.ID}}" class="text-danger"><h5>
+										<span class="fas fa-user"></span>&nbsp;{{NowPlaying.ArtistName}}</h5></a>
+									<a href="/audiofiles?b={{NowPlaying.Album.ID}}" class="text-warning"><h5>
+										<span class="fas fa-circle"></span>&nbsp;{{NowPlaying.AlbumName}}</h5></a>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-auto text-light">
+									{{#if NowPlaying.GenreNames.length}}
+									<i class="fas fa-star"></i>
+									{{#each NowPlaying.GenreNames}}
+									<a href='/audiofiles?g={{this}}'><span class="badge badge-light jb-linkcursor jb-hover-alpha-5">{{this}}</span></a>
+									{{/each}}
+									{{/if}}
+								</div>
+								<div class="col-auto text-light">
+									{{#if NowPlaying.TagNames.length}}
+									<i class="fas fa-heart"></i>
+									{{#each NowPlaying.TagNames}}
+									<a href='/audiofiles?t={{this}}'><span class="badge badge-light jb-linkcursor jb-hover-alpha-5">{{this}}</span></a>
+									{{/each}}
+									{{/if}}
+								</div>
+							</div>
+							<div class="row pt-3">
+								<div class="col-12">
+									<div class="progress progress-bar-block jb-bg-smoke-3">
+										<div name="jb-player-progress" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="{{NowPlaying.Percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{NowPlaying.Percent}}%;"></div>
+									</div>
+									<span name="jb-player-progress-text" class="progress-value progress-value-center text-white text-nowrap">{{NowPlaying.PosText}}&nbsp;-&nbsp;{{NowPlaying.DurText}}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--nur sm, md-->
+			<div class="col-12 d-none d-sm-block d-lg-none p-1 pb-0">
+				<div class='jb-primary-container'>
+					<div class="row px-0 py-3 m-0">
+						<div class="col-4">
+							<img class="img-fluid" style="max-height: 60vh;" src="/mdb/image/album/get?audioFileID={{NowPlaying/AudioFileID}}"/>
+						</div>
+						<div class="col">
+							<div class="row">
+								<div class="col-12">
+									<a class="text-light" href="/audiofiles?f={{NowPlaying.UrlTitle}}"><h4>
+										<span class="fas fa-music"></span>&nbsp;{{NowPlaying.Title}}</h4></a>
+								</div>
+								<div class="col-auto">
+									<a href="/audiofiles?a={{NowPlaying.Artist.ID}}" class="text-danger"><h5>
+										<span class="fas fa-user"></span>&nbsp;{{NowPlaying.ArtistName}}</h5></a>
+								</div>
+								<div class="col-auto">
+									<a href="/audiofiles?b={{NowPlaying.Album.ID}}" class="text-warning"><h5>
+										<span class="fas fa-circle"></span>&nbsp;{{NowPlaying.AlbumName}}</h5></a>
+								</div>
+							</div>
+							<div class="row py-3">
+								<div class="col-auto">
+									{{#if NowPlaying.GenreNames.length}}
+									<i class="fas fa-star"></i>
+									{{#each NowPlaying.GenreNames}}
+									<a href='/audiofiles?g={{this}}'><span class="badge badge-light jb-linkcursor jb-hover-alpha-5">{{this}}</span></a>
+									{{/each}}
+									<br/>
+									{{/if}}
+									{{#if NowPlaying.TagNames.length}}
+									<i class="fas fa-heart"></i>
+									{{#each NowPlaying.TagNames}}
+									<a href='/audiofiles?t={{this}}'><span class="badge badge-light jb-linkcursor jb-hover-alpha-5">{{this}}</span></a>
+									{{/each}}
+									{{/if}}
+								</div>
+							</div>
+							<div class="row align-self-end">
+								<div class="col">
+									<div class="progress progress-bar-block jb-bg-smoke-3">
+										<div name="jb-player-progress" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="{{NowPlaying.Percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{NowPlaying.Percent}}%;"></div>
+									</div>
+									<span name="jb-player-progress-text" class="progress-value progress-value-center text-white text-nowrap">{{NowPlaying.PosText}}&nbsp;-&nbsp;{{NowPlaying.DurText}}</span>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--else xs, >lg-->
+			<!--<div class="col-12 col-md-6 col-lg-4 col-xl-3 d-block d-sm-none d-lg-block p-1 pb-0">-->
+			<!--else >lg-->
+			<div class="col-12 col-md-6 col-lg-4 col-xl-3 d-none d-lg-block p-1 pb-0">
+				<div class='jb-primary-container'>
+					<div class="row justify-content-center px-0 py-3 m-0">
+						<div class="col-12 ">
+							<img class="img-fluid mx-auto d-block" style="max-height: 50vh;" src="/mdb/image/album/get?audioFileID={{NowPlaying/AudioFileID}}"/>
+						</div>
+						<div class="col-12 m-3">
+							<div class="progress progress-bar-block jb-bg-smoke-3">
+								<div name="jb-player-progress" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="{{NowPlaying.Percent}}" aria-valuemin="0" aria-valuemax="100" style="width: {{NowPlaying.Percent}}%;"></div>
+							</div>
+							<span name="jb-player-progress-text" class="progress-value progress-value-center text-white text-nowrap">{{NowPlaying.PosText}}&nbsp;-&nbsp;{{NowPlaying.DurText}}</span>
+						</div>
+						<div class="col-12">
+							<a class="text-light" href="/audiofiles?f={{NowPlaying.UrlTitle}}">
+								<h5><span class="fas fa-music"></span> {{NowPlaying/Title}}</h5>
+							</a>
+							<a href="/audiofiles?a={{NowPlaying.Artist.ID}}" class="text-danger">
+								<h5><span class="fas fa-user"></span> {{NowPlaying/ArtistName}}</h5>
+							</a>
+							<a href="/audiofiles?b={{NowPlaying.Album.ID}}" class="text-warning">
+								<h5><span class="fas fa-circle"></span> {{NowPlaying/AlbumName}}</h5>
+							</a>
+							{{#if NowPlaying.GenreNames.length}}
+                            <i class="fas fa-star"></i>
+                            {{#each NowPlaying.GenreNames}}
+							<a href='/audiofiles?g={{this}}'><span class="badge badge-light jb-linkcursor jb-hover-alpha-5">{{this}}</span></a>
+                            {{/each}}
+                            <br/>
+							{{/if}}
+							{{#if NowPlaying.TagNames.length}}
+                            <i class="fas fa-heart"></i>
+                            {{#each NowPlaying.TagNames}}
+							<a href='/audiofiles?t={{this}}'><span class="badge badge-light jb-linkcursor jb-hover-alpha-5">{{this}}</span></a>
+                            {{/each}}
+							{{/if}}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col">
+				<div class="row p-1">
+					{{#each PlayListItems}}
+					<div class="col-12 jb-playlistitem">
+						{{#if this.canRemove}}
+						<div class="jb-playlistitem-remove">
+							<div class="close text-danger" data-cave-click="removeTitle,playlistItemID={{this.ID}}">
+								<i>&times;</i>
+							</div>
+						</div>
+						{{/if}}
+						<div class="row">
+							<div class="col-auto">
+								<img class="img-fluid" style="max-height: 8em; max-width: 30vw;" src="/mdb/image/album/get?audioFileID={{this.AudioFileID}}&thumb=true"/>
+							</div>
+							<div class="col">
+								<div class='row'>
+									<div class="col-12">
+										<a href="/audiofiles?f={{this.UrlTitle}}"><h4><i class="fas fa-music"></i> {{this.AudioFile.Title}}</h4></a>
+									</div>
+									<div class="col-12 col-lg-6">
+										<a class="text-danger" href="/audiofiles?a={{this.Artist.ID}}"><h5><i class="fas fa-user"></i> {{this.Artist.Name}}</h5></a>
+										<a class="text-primary" href="/audiofiles?b={{this.Album.ID}}"><h5><i class="fas fa-circle"></i> {{this.Album.Name}}</h5></a>
+									</div>
+									<div class="col-12 col-lg-6 d-none d-sm-inline">
+										{{#if this.GenreNames.length}}
+                                        <i class="fas fa-star"></i>
+                                        {{#each this.GenreNames}}
+										<a href='/audiofiles?g={{this}}'><span class="badge">{{this}}</span></a>
+                                        {{/each}}
+                                        <br/>
+										{{/if}}
+										{{#if this.TagNames.length}}
+                                        <i class="fas fa-heart"></i>
+                                        {{#each this.TagNames}}
+										<a href='/audiofiles?t={{this}}'><span class="badge">{{this}}</span></a>
+                                        {{/each}}
+										{{/if}}
+										<br/><i class="fas fa-clock"></i> {{this.DurationText}}
+									</div>
+								</div>
+							</div>
+							<div class="col-auto d-none d-sm-inline">
+								<!--<div class="col-3 col-lg-2 my-auto d-none d-sm-inline">-->
+								<span class="d-inline-block" tabindex="0" data-toggle="tooltip" data-placement="left" title="{{this.Owner.NickName}}">
+								{{#if this.Owner.AvatarID}}
+									<img class="img-fluid" style="max-height: 8em;" src="/avatar/get?id={{this.Owner.AvatarID}}"/>
+								{{else}}
+									<img class="img-fluid" style="max-height: 8em;" src="/images/jukebob.png"/>
+								{{/if}}
+								</span>
+							</div>
+						</div>
+					</div>
+					{{/each}}
+				</div>
+			</div>
+		</div>
+		{{else}}
+		<div class="card-body">
+			<div class="row">
+				<h4 class="col text-light">JukeBob is not playing :(</h4>
+			</div>
+		</div>
+		{{/if}}
+	</script>
+</div>
+<!-- /parts/scripts.html -->
+<div class="container-fluid" style='height: 100vh;'></div>
+<script>
+    jukeBob.removeTitle = function (data) {
+        jukeBob.doAjaxMsg('/mdb/playlist/remove.json', data.params, 'Title removed from playlist.');
+    };
+
+    CaveJSON.clientHook = function (timerOnly) {
+        CaveJSON.NowPlaying.Position = Math.max(Date.now() - new Date(CaveJSON.NowPlaying.StartDateTime), 0);
+        CaveJSON.NowPlaying.Position = Math.min(CaveJSON.NowPlaying.Position, CaveJSON.NowPlaying.Duration);
+        CaveJSON.NowPlaying.Percent = 100 * CaveJSON.NowPlaying.Position / CaveJSON.NowPlaying.Duration;
+        CaveJSON.NowPlaying.PosText = CaveJSON.NowPlaying.Position.getSecondsFromMSeconds().toMMSS();
+        CaveJSON.NowPlaying.DurText = CaveJSON.NowPlaying.Duration.getSecondsFromMSeconds().toMMSS();
+        if (!timerOnly) {
+            jukeBob.fillTemplate('main');
+            jukeBob.setCaveHooks();
+            jukeBob.onRenderDone();
+        }
+    };
+
+    jukeBob.onRenderDone = function () {
+        jukeBob.progressText = $('[name=jb-player-progress-text]');
+        jukeBob.progressValue = $('[name=jb-player-progress]');
+    };
+
+    if (CaveJSON.NowPlaying && CaveJSON.NowPlaying.isPlaying) {
+        // fill now playing position and progress before first render
+        CaveJSON.clientHook(true);
+        jukeBob.renderPage(jukeBob.onRenderDone);
+	} else {
+        window.location = "/admin/overview";
+	}
+
+
+    setInterval(function () {
+        if (CaveJSON.NowPlaying && CaveJSON.NowPlaying.isPlaying) {
+            CaveJSON.clientHook(true);
+            jukeBob.progressText.each(function()
+			{
+                $(this).html(CaveJSON.NowPlaying.PosText + '&nbsp;-&nbsp;' + CaveJSON.NowPlaying.DurText);
+			});
+            jukeBob.progressValue.each(function()
+            {
+                $(this).css('width', CaveJSON.NowPlaying.Percent.toString() + '%');
+            });
+        }
+    }, 1000);
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- /parts/head.html -->
+    <title>JukeBob Subset Filter</title>
+</head>
+
+<body>
+<!-- /parts/admin-nav.html -->
+    <script data-cave-template="main" type="text/x-handlebars-template">
+		<div class="container-fluid">
+			<div class="card mt-3 jb-bg-primary-5">
+				<h5 class="card-header jb-bg-primary-5 text-light">Filters for subset: {{activeSubset.Name}}</h5>
+				<div class="card-body jb-bg-light-5">
+					<div class='row'>
+					{{#each SubsetFilters}}
+					<div class='col-12 col-md-4 jb-searchlistitem'>
+						<div class='row p-0'>
+							<div class='col'>
+								<h4>{{this.Text}}</h4>
+								{{this.Mode}} <strong>{{this.Type}}</strong>
+							</div>
+							<div class='col-auto'>
+								<div class="btn" data-cave-click="deleteSubsetFilter,subsetFilterID={{this.ID}}"><i class="fas fa-times"></i></div>
+							</div>
+						</div>
+					</div>
+					{{/each}}
+					</div>
+					<hr>
+					<form id="addFilter">
+						<input name="subsetID" type="hidden" value="{{activeSubset.ID}}">
+						<div class="row">
+							<div class="col-6 col-sm-2 px-0 pr-1 pb-1">
+								<div class="form-control btn-primary jb-bg-primary-5">
+									<select id="filterMode" name="mode">
+										<option>Whitelist</option>
+										<option>Blacklist</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-6 col-sm-2 px-0 pr-1 pb-1">
+								<div class="form-control btn-primary jb-bg-primary-5">
+									<select id="filterType" name="type">
+										<option>Artist</option>
+										<option>Album</option>
+										<option>Category</option>
+										<option>Genre</option>
+										<option>Tag</option>
+									</select>
+								</div>
+							</div>
+							<div class="col-8 col-sm-6 px-0 pr-1 pb-1">
+								<div class="form-control btn-primary jb-bg-primary-5">
+									<select id="filterText" name="text" type="text" placeholder="enter your filter text" />
+								</div>
+							</div>
+							<div class="col-4 col-sm-2 px-0 pr-1 pb-1">
+								<button type="submit" class="btn btn-primary jb-bg-primary-5" style="width:100%; height:100%" id="addFilterBtn"><i class="fas fa-pencil-alt"></i> add filter</button>
+							</div>
+						</div>
+						<div class="row">
+
+						</div>
+					</form>
+				</div>
+			</div>
+    	</div>
+    </script>
+    <!-- /parts/scripts.html -->
+    <script>
+        jukeBob.deleteSubsetFilter = function(data) {
+            jukeBob.doAjax({
+                url: '/admin/subsetfilter/delete.json',
+                data: data.params,
+                success: function (data) {
+                    CaveJSON.parseNewData(data.CaveJSON);
+                    CaveJSON.subsetFilterTypeisBlackList = true;
+                    jukeBob.fillTemplate('main');
+                    jukeBob.onRenderDone();
+                }
+            })
+        };
+
+        jukeBob.onTypeChange = function (data) {
+            let newType = "";
+            if (!this.value) {
+                if (data && data.type) {
+                    newType = data.type;
+				} else {
+                    newType = 'Artist';
+                }
+            } else {
+                newType = this.value;
+            }
+//			L('change type: ' + newType);
+            processResults = function (data) {
+               window.console.log('process');
+                let i,item,results = [];
+                for (i=0; i<data.length; i++) {
+                    item = {};
+                    item.id=i;
+                    item.text = data[i];
+                    results.push(item);
+                }
+                return { 'results': results };
+            };
+			let filter = $('#filterText');
+            filter.val('');
+            filter.html('<option></option>');
+            switch (newType) {
+                case 'Artist':
+                    filter.select2({
+                        ajax: {
+                            url: '/mdb/artist/autocomplete',
+                        },
+                        placeholder: 'Select an Artist',
+                        allowClear: false,
+                        tags: true
+                    });
+                    break;
+                case 'Album':
+                    filter.select2({
+                        ajax: {
+                            url: '/mdb/album/autocomplete',
+                        },
+                        placeholder: 'Select an Album',
+                        allowClear: false,
+                        tags: true
+                    });
+                    break;
+                case 'Category':
+                    filter.select2({
+                        data: window.selectorData.categories.subsetFix,
+                        placeholder: 'Select a Category',
+                        allowClear: false,
+                        tags: true
+                    });
+                    break;
+                case 'Genre' :
+                    filter.select2({
+                        data: window.selectorData.genres.data,
+                        placeholder: 'Select a Genre',
+                        allowClear: false,
+                        tags: true
+                    });
+                    break;
+                case 'Tag':
+                    filter.select2({
+                        data: window.selectorData.tags.data,
+                        placeholder: 'Select a Tag',
+                        allowClear: false,
+                        tags: true
+                    });
+                    break;
+            }
+        };
+
+        jukeBob.setTypeOnChange = function () {
+            if (CaveJSON.subsetFilterFormData) {
+                L('new form data');
+				L(CaveJSON.subsetFilterFormData.type);
+
+                $('#filterMode').val(CaveJSON.subsetFilterFormData.mode);
+                $('#filterType').val(CaveJSON.subsetFilterFormData.type);
+			}
+
+            $('#filterType').off('select2:select').on('select2:select', jukeBob.onTypeChange).trigger('change');
+            jukeBob.onTypeChange(CaveJSON.subsetFilterFormData);
+		};
+
+        jukeBob.fixSelectorData = function() {
+            if (window.selectorData === undefined) {
+                let cs = CaveJSON.SelectorData.categories;
+                cs.subsetFix = [];
+                for (let i = 0; i < cs.data.length; i++) {
+                    cs.subsetFix.push({
+                        id: cs.data[i].text,
+                        text: cs.data[i].text
+                    })
+                }
+                window.selectorData = CaveJSON.SelectorData;
+            }
+		};
+
+        jukeBob.onRenderDone = function () {
+			// L('on Render Done');
+			$('#filterMode').select2();
+            $('#filterType').select2();
+            jukeBob.setClientHook(null);
+            jukeBob.fixSelectorData();
+            jukeBob.setTypeOnChange();
+            $(document).off('submit').on('submit', '#addFilter', function (e) {
+                e.preventDefault();
+                const formData = jukeBob.formDataToObject($(this).serializeArray());
+                CaveJSON.subsetFilterFormData = formData;
+//				L(formData);
+                jukeBob.doAjax({
+                    url: '/admin/subsetfilter/update.json',
+                    type: 'POST',
+                    data: formData,
+					myData: formData,
+                    success: function (data) {
+                        L(data);
+                        CaveJSON.parseNewData(data.CaveJSON);
+                        CaveJSON.subsetFilterTypeisBlackList = true;
+                        jukeBob.fillTemplate('main');
+                        jukeBob.onRenderDone();
+                    }
+                });
+                return false;
+            });
+        };
+
+        jukeBob.renderPage(jukeBob.onRenderDone);
+
+    </script>
+</body>
+
+</html>

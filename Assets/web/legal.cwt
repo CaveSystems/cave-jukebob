@@ -1,0 +1,13 @@
+[CaveWebTemplate]
+Version = 1
+
+[Functions]
+/auth/session
+/mdb/player/state
+/mdb/list/overview
+/mdb/configuration/host
+
+[Content]
+/parts/head.html
+/parts/navigation.html
+/parts/scripts.html

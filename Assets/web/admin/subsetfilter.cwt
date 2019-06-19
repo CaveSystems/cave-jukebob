@@ -1,0 +1,16 @@
+[CaveWebTemplate]
+Version=1
+
+[Functions]
+/auth/session
+/mdb/player/state
+/mdb/list/selectors
+/admin/subsetfilter/list
+
+[/admin/subsetfilter/list]
+subsetID=id
+
+[Content]
+/parts/head.html
+/parts/admin-nav.html
+/parts/scripts.html

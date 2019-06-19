@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- /parts/head.html -->
+    <title>JukeBob Register New User</title>
+</head>
+
+<body>
+<!-- /parts/navigation.html -->
+<script data-cave-template="main" type="text/x-handlebars-template">
+	<div class="container-fluid jb-main jb-bg-smoke-5">
+		<div class='row justify-content-center'>
+			<div class='col-auto'>
+				<div class="card mt-3 jb-bg-danger-7">
+					<h5 class="card-header text-light jb-bg-danger-7 text-light">JukeBob new user sign up</h5>
+					<div class="card-body jb-bg-light-5">
+
+						<form id='registerForm'>
+							<div class="form-group">
+								<label for="userNickname">Nickname</label>
+								<input type="text" class="form-control" id="userNickname" name="nickname"
+									   aria-describedby="nicknameHelp" placeholder="Enter nickname" required>
+								<small id="nicknameHelp" class="form-text text-muted">Nickname needs to have at least three characters.
+								</small>
+							</div>
+							<div class="form-group">
+								<label for="userPassword">Password</label>
+								<input type="password" class="form-control" id="userPassword" name="password" placeholder="Password"
+									   required>
+							</div>
+							<div class="row">
+								<div class="col">
+									<div class="input-group-text">
+										<input type="checkbox" id="accept-privacy" aria-label="Accept privacy policy">
+										&nbsp;
+										I accept the <a href='/privacy.html' class='px-2 text-danger'>privacy policy</a>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									<div class="input-group-text">
+										<input type="checkbox" id="accept-terms" aria-label="Accept license">
+										&nbsp;
+										I accept the <a href='/terms.html' class='px-2 text-danger'>terms of service</a>
+									</div>
+								</div>
+							</div>
+							<div class="row pt-3">
+								<div class="col">
+									<a class="btn btn-dark" href="/login">Login</a>
+								</div>
+								<div class="col-auto">
+									<button type="submit" class="btn btn-danger">Sign up</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+        </div>
+    </div>
+</script>
+<!-- /parts/scripts.html -->
+<div class="container-fluid" style='height: 100vh;'></div>
+<script>
+    jukeBob.onRenderDone = function () {
+        $(document).on('submit', '#registerForm', function (e) {
+
+            e.preventDefault();
+            let formData = jukeBob.formDataToObject($(this).serializeArray());
+            if (document.getElementById('accept-privacy').checked &&
+                document.getElementById('accept-terms').checked) {
+                jukeBob.doAjax({
+                    url: '/auth/account/create.json',
+                    type: 'POST',
+                    data: formData,
+                    success: function (data) {
+                        CaveJSON.parseNewData(data.CaveJSON);
+                        if (CaveJSON.resultOK) {
+                            window.location.href = '/login';
+                        } else {
+                            jukeBob.showError(CaveJSON.errorMsg, 'JukeBob')
+                        }
+                    }
+                });
+            } else {
+                jukeBob.showError('You must accept our privacy policy and our terms of service to sign up!', 'JukeBob');
+            }
+
+            return false;
+        });
+    };
+
+    jukeBob.renderPage(jukeBob.onRenderDone);
+</script>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- /parts/head.html -->
+    <title>JukeBob Userlist</title>
+</head>
+
+<body>
+<!-- /parts/admin-nav.html -->
+<script data-cave-template="main" type="text/x-handlebars-template">
+	<div class="container-fluid" id="content">
+		<div class="card mt-3 jb-bg-primary-5">
+			<h5 class="card-header text-light jb-bg-primary-5 text-light">JukeBob system settings</h5>
+			<div class="card-body jb-bg-light-5">
+				<div class="row">
+					<div class='col-auto p-1'>
+						<a class="jb-nounderline" href="/admin/globals"><span class="btn btn-primary jb-bg-primary-5 btn-block" ><i class='fa fa-3x fa-sliders-h'></i><br/> Globals</span></a>
+					</div>
+					<div class='col-auto p-1'>
+						<a class="jb-nounderline" href="/admin/subsets"><span class="btn btn-primary jb-bg-primary-5 btn-block" data-cave-click="changeCrawler,mode=file"><i class='fa fa-3x fa-list-ul'></i><br/> Subsets</span></a>
+					</div>
+					<div class='col-auto p-1'>
+						<a class="jb-nounderline" href="/admin/crawler"><span class="btn btn-primary jb-bg-primary-5 btn-block" data-cave-click="changeCrawler,mode=file"><i class='fa fa-3x fa-terminal'></i><br/> Crawler</span></a>
+					</div>
+					<div class='col-auto p-1'>
+						<a class="jb-nounderline" href="/admin/users"><span class="btn btn-primary jb-bg-primary-5 btn-block" data-cave-click="changeCrawler,mode=file"><i class='fa fa-3x fa-users'></i><br/> Users</span></a>
+					</div>
+					<div class='col-auto p-1'>
+						<a class="jb-nounderline" href="/admin/system-log"><span class="btn btn-primary jb-bg-primary-5 btn-block" data-cave-click="changeCrawler,mode=file"><i class='fa fa-3x fa-align-justify'></i><br/> System-Log</span></a>
+					</div>
+					<div class='col-auto p-1'>
+						<span class="btn btn-dark jb-bg-smoke-5 btn-block" data-cave-click="shutDown"><i class='fa fa-3x fa-power-off'></i><br/>shut down</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+<!-- /parts/scripts.html -->
+<script>
+    jukeBob.shutDown = function(data) {
+        if (CaveJSON.Session.isAdmin) {
+            jukeBob.doAjaxMsg('/host/shutdown.json', data.params, 'jukebob will shut down!');
+        }
+	};
+
+    jukeBob.renderPage();
+</script>
+</body>
+
+</html>

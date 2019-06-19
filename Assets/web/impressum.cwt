@@ -1,0 +1,12 @@
+[CaveWebTemplate]
+Version = 1
+
+[Functions]
+/auth/session
+/mdb/player/state
+/mdb/impressum
+
+[Content]
+/parts/head.html
+/parts/navigation.html
+/parts/scripts.html

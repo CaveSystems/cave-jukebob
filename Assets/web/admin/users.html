@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- /parts/head.html -->
+    <title>JukeBob Userlist</title>
+</head>
+
+<body>
+<!-- /parts/admin-nav.html -->
+<script data-cave-template="main" type="text/x-handlebars-template">
+	<div class="container-fluid" id="content">
+		<div class='row'>
+			<div class='col'>
+				<div class="card mt-3 jb-bg-primary-7">
+					<h5 class="card-header jb-bg-primary-7 text-light">Users</h5>
+					<div class="card-body jb-bg-light-5">
+						{{#each Users}}
+						<div class="row align-items-center jb-searchlistitem mx-0">
+							<div class="col-auto" style="margin: -1em;">
+								<img src="/avatar/get?id={{this.AvatarID}}" width="64">
+							</div>
+							<div class="col-auto p-1">
+								<div class="dropdown align-content-center">
+									<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton{{this.AuthLevel}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+										{{this.AuthLevelName}}
+									</button>
+									<div class="dropdown-menu" aria-labelledby="dropdownMenuButton{{this.AuthLevel}}">
+										{{#each @root.UserLevels}}
+										<span class="dropdown-item jb-linkcursor" data-cave-click="modifyUser,userID={{../ID}},userLevel={{this.ID}}">{{this.Name}}</span>
+										{{/each}}
+									</div>
+								</div>
+							</div>
+							<div class="col p-1">
+								<button class="btn btn-primary" data-InPlaceEdit="editUserNickData.{{this.ID}}">{{this.NickName}}</button>
+							</div>
+							<div class="col-auto p-1 float-right">
+								<div class="btn btn-danger" data-cave-click="deleteUser,userID={{this.ID}}"><i class="fas fa-times"></i></div>
+							</div>
+						</div>
+						{{/each}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+<!-- /parts/in-place-edit.html -->
+<!-- /parts/scripts.html -->
+<!-- /parts/in-place-edit.html -->
+<script>
+
+    if (CaveJSON.Users) {
+        var editUserNick = {};
+        for (let i=0; i < CaveJSON.Users.length; i++) {
+            editUserNick[CaveJSON.Users[i].ID] = {
+                key:'NickName',
+                params : {
+                    userID: CaveJSON.Users[i].ID
+                }
+            }
+        }
+    }
+
+    jukeBob.deleteUser = function (data) {
+        jukeBob.doAjax({
+            url: '/auth/admin/user/delete.json',
+            data: data.params
+        })
+    };
+
+    jukeBob.modifyUser = function (data) {
+        L(data.params);
+        jukeBob.doAjax({
+            url: '/auth/admin/user/modify.json',
+            data: data.params,
+            success: function (data) {
+                CaveJSON.parseNewData(data.CaveJSON);
+                jukeBob.prepareData();
+                jukeBob.fillTemplate('main');
+            }
+        });
+    };
+
+    jukeBob.prepareData = function () {
+        if (CaveJSON.Users) {
+            window.editUserNickData = {};
+            for (let i=0; i < CaveJSON.Users.length; i++) {
+                window.editUserNickData[CaveJSON.Users[i].ID] = {
+                    key: 'nickName',
+                    value: CaveJSON.Users[i].NickName,
+                    params : {
+                        userID: CaveJSON.Users[i].ID
+                    },
+                    delegate: jukeBob.modifyUser
+                }
+            }
+        }
+    };
+
+    jukeBob.prepareData();
+
+    jukeBob.renderPage();
+
+</script>
+</body>
+
+</html>

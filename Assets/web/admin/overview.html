@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- /parts/head.html -->
+    <title>JukeBob System Overview</title>
+</head>
+
+<body>
+<!-- /parts/navigation.html -->
+<script data-cave-template="main" type="text/x-handlebars-template">
+    <div class="container-fluid">
+		<div class='row justify-content-center'>
+			<div class='col-12'>
+				<div class="card mt-3 jb-bg-primary-7">
+					<h5 class="card-header jb-bg-primary-7 text-light">JukeBob Overview</h5>
+					<div class="card-body jb-bg-light-5">
+						<div class='row d-flex justify-content-center'>
+							<div class='col-auto text-center'>
+								<h5>Duration:</h5>
+								<p>
+									<i class='fa fa-2x fa-clock'></i><br/>
+									{{Overview.DurationString}}
+								</p>
+							</div>
+							<div class='col-auto text-center'>
+								<h5>Files:</h5>
+								<p>
+									<i class='fa fa-2x fa-file'></i><br/>
+									{{Overview.FileCount}}
+								</p>
+							</div>
+							<div class='col-auto text-center'>
+								<h5>Titles:</h5>
+								<p>
+									<i class='fa fa-2x fa-file-audio'></i><br/>
+									{{Overview.AudioFileCount}}<br/>
+									{{Overview.AudioDataSizeString}}
+								</p>
+							</div>
+							<div class='col-auto text-center'>
+								<h5>Images:</h5>
+								<p>
+									<i class='fa fa-2x fa-file-image'></i><br/>
+									{{Overview.ImageCount}}<br/>
+									{{Overview.ImageDataSizeString}}
+								</p>
+							</div>
+
+							<div class='col-auto text-center'>
+								<h5>Artists:</h5>
+								<p>
+									<i class='fa fa-2x fa-user'></i><br/>
+									{{Overview.ArtistCount}}
+								</p>
+							</div>
+							<div class='col-auto text-center'>
+								<h5>Albums:</h5>
+								<p>
+									<i class='fa fa-2x fa-circle'></i><br/>
+									{{Overview.AlbumCount}}
+								</p>
+							</div>
+							<div class='col-auto text-center'>
+								<h5>Genres:</h5>
+								<p>
+									<i class='fa fa-2x fa-star'></i><br/>
+									{{Overview.GenreCount}}
+								</p>
+							</div>
+							<div class='col-auto text-center'>
+								<h5>Tags:</h5>
+								<p>
+									<i class='fa fa-2x fa-heart'></i><br/>
+									{{Overview.TagCount}}
+								</p>
+							</div>
+						</div>
+                        <hr/>
+                        <div class='row d-flex justify-content-center'>
+                            <div class='col-auto text-center'>
+                                <h5>Web:</h5>
+                                <ul>
+                                    {{#each HostInformations.IPAddresses}}
+                                    <li>
+                                        <a href=http://{{this}}:{{../HostInformations.WebPort}} target="_blank">http://{{this}}:{{../HostInformations.WebPort}}</a>
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class='row d-flex justify-content-center'>
+                            <div class='col-auto text-center'>
+                                <h5>Ftp:</h5>
+                                <ul>
+                                    {{#each HostInformations.IPAddresses}}
+                                    <li>
+                                        <a href=ftp://{{this}}:{{../HostInformations.FtpPort}} target="_blank">ftp://{{this}}:{{../HostInformations.FtpPort}}</a>
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                            </div>
+                        </div>
+					</div>
+					<span class="text-light">{{Overview.Version}} @ {{HostInformations.Name}}</span>
+				</div>
+			</div>
+		</div>
+    </div>
+</script>
+<!-- /parts/scripts.html -->
+<script>
+    jukeBob.renderPage();
+</script>
+</body>
+
+</html>

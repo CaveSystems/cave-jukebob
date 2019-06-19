@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- /parts/head.html -->
+    <title>JukeBob System Legal terms</title>
+</head>
+
+<body>
+<!-- /parts/navigation.html -->
+<script data-cave-template="main" type="text/x-handlebars-template">
+    <div class="container-fluid">
+        <div class='row justify-content-center'>
+            <div class='col-12'>
+                <div class="card mt-3 jb-bg-primary-7">
+                    <h5 class="card-header jb-bg-primary-7 text-light">JukeBob Legal terms</h5>
+                    <div class="card-body jb-bg-light-5">
+                        <div class='row d-flex justify-content-center'>
+                            <div class='col-auto text-center'>
+                                <h2>Contact</h2>
+                                <p>Device: {{HostInformations.Name}}</p>
+                                <span>Ip Addresses:</span>
+                                <ul>
+                                    {{#each HostInformations.IPAddresses}}
+                                    <li>
+                                       {{this}}
+                                    </li>
+                                    {{/each}}
+                                </ul>
+                                <h2>Liability for Contents</h2>
+                                <p>As service providers, we are liable for own contents of these jukebob user interface sites. However service providers are not obligated to  permanently monitor submitted or stored information or to search for evidences that indicate illegal activities.</p>
+                                <p>Legal obligations to removing information or to blocking the use of information remain unchallenged. In this case, liability is only possible at the time of knowledge about a specific violation of law. Illegal contents will be removed immediately at the time we get knowledge of them.</p>
+                                <h2>Liability for Links</h2>
+                                <p>Our offer includes links to external content. We have no influence on the contents, therefore we cannot guarantee for those contents. Providers or administrators of linked content are always responsible for their own contents.</p>
+                                <p>The linked content had been checked for possible violations of law at the time of the establishment of the link. Illegal contents were not detected at the time of the linking. A permanent monitoring of the contents of linked websites cannot be imposed without reasonable indications that there has been a violation of law. Illegal links will be removed immediately at the time we get knowledge of them.</p>
+                                <h2>Copyright</h2>
+                                <p>Contents and compilations published on these jukebob interface sites by the providers are subject to copyright laws. Reproduction, editing, distribution as well as the use of any kind outside the scope of the copyright law require a written permission of the author or originator. Downloads and copies of these websites are permitted for private use only.<br />
+                                    The commercial use of our contents without permission of the originator is prohibited.</p>
+                                <p>Copyright laws of third parties are respected as long as the contents do not originate from the provider. All Covers and Images are contributions of third parties. If you notice any violations of copyright law, please inform us. Such contents will be removed immediately.</p>
+                                <h2>Privacy</h2>
+                                Please read our <a href='privacy.html'>privacy policy page</a> for more information.
+                            </div>
+                        </div>
+                    </div>
+                    <span class="text-light">{{Overview.Version}} @ {{HostInformations.Name}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- /parts/scripts.html -->
+<script>
+    jukeBob.renderPage();
+</script>
+</body>
+
+</html>

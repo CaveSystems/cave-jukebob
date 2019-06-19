@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- /parts/head.html -->
+    <title>JukeBob subset list</title>
+</head>
+
+<body>
+<!-- /parts/admin-nav.html -->
+<script data-cave-template="main" type="text/x-handlebars-template">
+	<div class="container-fluid">
+		<div class="card mt-3 jb-bg-primary-5">
+			<h5 class="card-header jb-bg-primary-5 text-light">JukeBob Subsets</h5>
+			<div class="card-body jb-bg-light-5">
+				<div class='row'>
+					{{#each Subsets}}
+					<div class='col-12 col-md-4 jb-searchlistitem {{this.activeClass}}'>
+						<div class='row'>
+							<div class='col'>
+								<a class="btn" href="/admin/subsetfilter?id={{this.ID}}"><h4><i class="fas fa-edit"></i> {{this.Name}}</h4></a>
+							</div>
+							<div class='col-auto'>
+								<div class='btn'>
+									<span class='badge badge-inverse'>{{this.TitleCount}}</span>
+								</div>
+							</div>
+							<div class='col-auto'>
+								{{#unless this.isActive}}
+								<div class="btn" data-cave-click="setDefaultSubset,streamID=1,subsetID={{this.ID}}"><i class="fas fa-star"></i></div>
+								{{/unless}}
+								<span class='btn' data-cave-click="deleteSubset,subsetID={{this.ID}}"><i class="fas fa-times"></i></span>
+							</div>
+						</div>
+					</div>
+					{{/each}}
+				</div>
+				<hr>
+				<div class="row">
+					<div class='col-md-12 col-lg-6'>
+						<div class="input-group">
+							<input id="subsetName" class="form-control" type="text" placeholder="New Subset" data-cave-enterPressDoClick="createSubsetBtn"/>
+							<div class="input-group-append">
+								<div class="btn btn-primary jb-bg-primary-5" id="createSubsetBtn" data-cave-click="createSubset,name<subsetName">Create</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+    </div>
+</script>
+<!-- /parts/scripts.html -->
+<script>
+    jukeBob.deleteSubset = function (data) {
+        jukeBob.doAjax({
+            url: '/admin/subset/delete.json',
+            data: data.params
+        })
+    };
+
+    jukeBob.createSubset = function (data) {
+        if (data && data.params && data.params.name && (data.params.name.length > 0)) {
+            jukeBob.doAjax({
+                url: '/admin/subset/update.json',
+                data: data.params,
+                error : function (data, status, text) {
+                    jukeBob.showError('Could not create Subset!', 'JukeBob');
+                    L(data);
+                }
+            })
+        }
+    };
+
+    jukeBob.setDefaultSubset = function (data) {
+        jukeBob.doAjax({
+			url: '/admin/stream/setting/set.json',
+			data: data.params,
+        });
+    };
+
+    jukeBob.renderPage();
+
+</script>
+</body>
+
+</html>

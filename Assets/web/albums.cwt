@@ -1,0 +1,24 @@
+[CaveWebTemplate]
+Version = 1
+
+[Functions]
+/auth/session
+/mdb/player/state
+/mdb/list/selectors
+/mdb/album/search
+
+# parameters
+[/mdb/album/search]
+page = p
+artistID = a
+categoryID = c
+genre = g
+tag = t
+filter = f
+
+[Content]
+/parts/head.html
+/parts/navigation.html
+/parts/scripts.html
+/parts/selectors.html
+/parts/page-filler.html

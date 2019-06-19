@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- /parts/head.html -->
+    <title>JukeBob Search Audiofiles</title>
+</head>
+
+<body>
+<!-- /parts/navigation.html -->
+<div class="container-fluid jb-bg-smoke-7" id="pageContainer">
+	<script data-cave-template="main" type="text/x-handlebars-template">
+		<div class="row pt-3" name="titlesearch">
+			<div class="col px-1">
+				<div class="input-group">
+					<input type="text" class="form-control" id="searchFilter" value="{{Params.f}}" placeholder="Title" data-cave-keyEnter="addParamsAndReload,f<searchFilter">
+					{{#if Params.f}}
+					<div class="input-group-append">
+						<div class="btn btn-danger" data-cave-click="removeParamsAndReload,f"><i class="fas fa-xs fa-times"></i></div>
+					</div>
+					{{/if}}
+					<!--<div class="btn btn-primary input-group-append" id="doSearch" data-cave-click="addParamsAndReload,f<searchFilter">Search</div>-->
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			{{#if Params.a}}
+			<div class="col-auto mt-1 pl-1 pr-0">
+				<div class="btn btn-danger" data-cave-click="removeParamsAndReload,a"><i class="fas fa-user"></i> {{CombinedArtists.0.Name}}
+					<!-- i class="fas fa-xs fa-times"></i -->
+				</div>
+			</div>
+			{{/if}}
+			{{#if Params.b}}
+			<div class="col-auto mt-1 pl-1 pr-0">
+				<div class="btn btn-danger" data-cave-click="removeParamsAndReload,b"><i class="fas fa-circle"></i> {{CombinedAlbums.0.Name}}
+					<!-- i class="fas fa-xs fa-times"></i -->
+				</div>
+			</div>
+			{{/if}}
+
+			<!-- /parts/selectors.html -->
+
+			<div class="mt-1 ml-auto">
+				<div class="btn disabled text-white">{{Pagination.RowCount}} Titles</div>
+			</div>
+		</div>
+		<div class="row pb-3">
+		</div>
+	</script>
+</div>
+
+<script data-cave-template="page" type="text/x-handlebars-template">
+    <div class="row">
+		{{#each CombinedAudioFiles}}
+		<div class="col-md-4 jb-searchlistitem">
+			<div class="row pt-3">
+				<div class='col-12' style='position:absolute; top:0.5em; z-index: 1;'>
+					<div class='row'>
+						<div class='col'>
+							<span class="text-primary jb-linkcursor" data-cave-click="addTitle,audioFileID={{this.AudioFileID}}">
+								<i class="fas fa-play-circle"></i> Play
+							</span>
+						</div>
+						<div class='col-auto'>
+							<i class="fas fa-clock"></i> {{this.DurationText}} &nbsp;
+							<span class="text-nowrap text-primary"><i class="fas fa-music"></i> {{this.TrackCount}}</span>
+						</div>
+					</div>
+				</div>
+
+                <div class="jb-linkcursor" data-cave-click="addTitle,audioFileID={{this.AudioFileID}}"></div>
+				<div class="col-auto pr-0">
+					<div class="jb-linkcursor" data-cave-click="addTitle,audioFileID={{this.AudioFileID}}">
+						<img class="img-fluid" style="max-height: 8em;" src="/mdb/image/album/get?audioFileID={{this.AudioFileID}}&thumb=true"/>
+					</div>
+				</div>
+				<div class="col" style="min-width: 12em;">
+					<h5>{{this.Title}}</h5>
+					<h5 class="jb-linkcursor text-danger" data-cave-click="addParamsAndReload,a={{this.TitleArtistID}}">
+						<i class="fas fa-user"></i> {{this.TitleArtistName}}
+					</h5>
+					<h5 class="jb-linkcursor text-primary" data-cave-click="addParamsAndReload,b={{this.AlbumID}}">
+						<i class="fas fa-circle"></i> {{this.AlbumName}}
+					</h5>
+
+					<div class="text-truncate">
+						{{#if this.GenreNames.length}}
+						<i class="fas fa-star"></i>
+						{{#each this.GenreNames}}
+							<span class="badge jb-linkcursor" data-cave-click='addParamsAndReload,g={{this}}'>{{this}}</span>
+						{{/each}}
+						<br/>
+						{{/if}}
+						{{#if this.TagNames.length}}
+						<i class="fas fa-heart"></i>
+						{{#each this.TagNames}}
+							<span class="badge jb-linkcursor" data-cave-click='addParamsAndReload,t={{this}}'>{{this}}</span>
+						{{/each}}
+						{{/if}}
+					</div>
+				</div>
+			</div>
+		</div>
+		{{/each}}
+    </div>
+</script>
+
+<!-- /parts/page-filler.html -->
+<!-- /parts/scripts.html -->
+<script type="text/javascript">
+
+    jukeBob.addTitle = function (data) {
+        if (CaveJSON.Session.Authenticated) {
+            let title = '';
+            let lookup = CaveJSON.lookUps.CombinedAudioFiles[data.params.audioFileID];
+            if (lookup > -1) {
+                title = CaveJSON.CombinedAudioFiles[lookup].Title + ' / ' + CaveJSON.CombinedAudioFiles[lookup].TitleArtistName;
+            }
+            jukeBob.doAjaxMsg('/mdb/playlist/add.json', data.params, 'added ' + title + ' to playlist');
+        } else {
+            jukeBob.showMessageBox({
+                Text: 'Please log in to add a title!',
+                Title: 'JukeBob',
+                Danger: true
+            });
+        }
+    };
+
+    jukeBob.onRenderDone = function () {
+        jukeBob.setClientHook(null);
+        let pageData = jukeBob.callTemplate('page', CaveJSON);
+        $('#pageContainer').append(pageData);
+        //      jukeBob.setSelectors();
+        jukeBob.setCaveHooks();
+        if (CaveJSON.ParamCount) {
+            $('#search_collapse').collapse('show');
+        }
+        jukeBob.setLoadNextPageOnScroll('/mdb/audiofile/search');
+    };
+
+    jukeBob.renderPage(jukeBob.onRenderDone);
+
+</script>
+</body>
+
+</html>

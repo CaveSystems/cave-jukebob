@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- /parts/head.html -->
+    <title>JukeBob Login</title>
+</head>
+
+<body>
+<!-- /parts/navigation.html -->
+<script data-cave-template="main" type="text/x-handlebars-template">
+	<div class="container-fluid jb-main jb-bg-smoke-5">
+		<div class='row justify-content-center'>
+			<div class='col-auto'>
+				<div class="card mt-3 jb-bg-primary-7">
+					<h5 class="card-header text-light jb-bg-primary-7 text-light">JukeBob Login</h5>
+					<div class="card-body jb-bg-light-5">
+						<div class="form-group">
+							<label for="loginNick">Nick name</label>
+							<input type="text" class="form-control" id="loginNick" aria-describedby="NickHelp" placeholder="Enter nick name" required>
+							<small id="NickHelp" class="form-text text-muted">Please provide your credentials.</small>
+						</div>
+						<div class="form-group">
+							<label for="loginPassword">Password</label>
+							<input type="password" class="form-control" id="loginPassword" placeholder="Password" required data-cave-enterPressDoClick="loginButton">
+						</div>
+						<div class="row">
+							<div class="col">
+								<a class="btn btn-dark" href="/admin/register">Sign up</a>
+							</div>
+							<div class="col-auto">
+								<button class="btn btn-primary" id="loginButton" data-cave-click="doLogin">Login</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+<!-- /parts/scripts.html -->
+<div class="container-fluid" style='height: 100vh;'></div>
+<script>
+
+    jukeBob.doLogin = function () {
+        let userName = $('#loginNick').val(),
+            password = $('#loginPassword').val();
+
+        if ((userName.length < 1) || (password.length < 1)) {
+            toastr.warning('user name or password missing', 'JukeBob', {timeOut:5000});
+            return;
+        }
+
+        const done = function (ajaxResult) {
+                window.location.href = '/index';
+            },
+            fail = function (data, status, text) {
+                jukeBob.showError('Login failed!', 'JukeBob');
+                L('login failed!');
+                L(data);
+            },
+            ajaxdata = {
+                url: '/auth/account/login.json',
+                username: userName,
+                password: password,
+                success: done,
+                error: fail
+            };
+
+        $.ajax(ajaxdata);
+    };
+
+
+    jukeBob.renderPage();
+
+</script>
+</body>
+</html>

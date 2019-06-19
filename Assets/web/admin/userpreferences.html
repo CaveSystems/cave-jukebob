@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<!-- /parts/head.html -->
+	<title>JukeBob User Preferences</title>
+</head>
+
+<body>
+<!-- /parts/navigation.html -->
+<script data-cave-template="main" type="text/x-handlebars-template">
+	<div class="container-fluid">
+		<div class='row'>
+			<div class='col-12 col-md-8 p-2'>
+				<div class="card jb-bg-smoke-7">
+					<h5 class="card-header text-light jb-bg-primary-7">{{Session.NickName}} Avatar</h5>
+					<div class="card-body">
+						<div class="row">
+							<div class="col d-flex align-items-center justify-content-center">
+								<img class="img-fluid" style="max-width: 50vw; max-height: 50vh;" src="/avatar/get?id={{Session.Avatar}}"/><br>
+							</div>
+							<div class='col d-flex align-items-center justify-content-center'>
+								<div class='row justify-content-center'>
+									<div class='col-auto'>
+										<div class="input-group mb-1" style='width:15em;'>
+											<div class="input-group-prepend">
+												<span class="input-group-text">Face</span>
+											</div>
+											<input type="text" class="form-control" value='{{avatar.face}}' id="avatarFace" data-cave-keyEnter='avatarSetValue,name=face,value<avatarFace'/>
+											<div class="input-group-append">
+												<button class="btn btn-danger" type="button" data-cave-click='avatarDecValue,name=face'>-
+												</button>
+												<button class="btn btn-primary" type="button" data-cave-click='avatarIncValue,name=face'>+
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class='col-auto'>
+										<div class="input-group mb-1" style='width:15em;'>
+											<div class="input-group-prepend">
+												<span class="input-group-text">Eyes</span>
+											</div>
+											<input type="text" class="form-control" value='{{avatar.eyes}}' id="avatarEyes" data-cave-keyEnter='avatarSetValue,name=eyes,value<avatarEyes'/>
+											<div class="input-group-append">
+												<button class="btn btn-danger" type="button" data-cave-click='avatarDecValue,name=eyes'>-
+												</button>
+												<button class="btn btn-primary" type="button" data-cave-click='avatarIncValue,name=eyes'>+
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class='col-auto'>
+										<div class="input-group mb-1" style='width:15em;'>
+											<div class="input-group-prepend">
+												<span class="input-group-text">Nose</span>
+											</div>
+											<input type="text" class="form-control" value='{{avatar.nose}}' id="avatarNose" data-cave-keyEnter='avatarSetValue,name=nose,value<avatarNose'/>
+											<div class="input-group-append">
+												<button class="btn btn-danger" type="button" data-cave-click='avatarDecValue,name=nose'>-
+												</button>
+												<button class="btn btn-primary" type="button" data-cave-click='avatarIncValue,name=nose'>+
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class='col-auto'>
+										<div class="input-group mb-1" style='width:15em;'>
+											<div class="input-group-prepend">
+												<span class="input-group-text">Mouth</span>
+											</div>
+											<input type="text" class="form-control" value='{{avatar.mouth}}' id="avatarMouth" data-cave-keyEnter='avatarSetValue,name=mouth,value<avatarMouth'/>
+											<div class="input-group-append">
+												<button class="btn btn-danger" type="button" data-cave-click='avatarDecValue,name=mouth'>-
+												</button>
+												<button class="btn btn-primary" type="button" data-cave-click='avatarIncValue,name=mouth'>
+													+
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class='col-auto'>
+										<div class="input-group mb-1" style='width:15em;'>
+											<div class="input-group-prepend">
+												<span class="input-group-text">Rotation</span>
+											</div>
+											<input type="text" class="form-control" value='{{avatar.rotation}}' id="avatarRotation" data-cave-keyEnter='avatarSetValue,name=rotation,value<avatarRotation'/>
+											<div class="input-group-append">
+												<button class="btn btn-danger" type="button" data-cave-click='avatarDecValue,name=rotation'>
+													-
+												</button>
+												<button class="btn btn-primary" type="button" data-cave-click='avatarIncValue,name=rotation'>
+													+
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class='col-auto'>
+										<div class="input-group mb-1" style='width:15em;'>
+											<div class="input-group-prepend">
+												<span class="input-group-text">Color</span>
+											</div>
+											<input type="text" class="form-control" value='{{avatar.color}}' id="avatarColor" data-cave-keyEnter='avatarSetValue,name=color,value<avatarColor'/>
+											<div class="input-group-append">
+												<button class="btn btn-danger" type="button" data-cave-click='avatarDecValue,name=color,value=5'>
+													-
+												</button>
+												<button class="btn btn-primary" type="button" data-cave-click='avatarIncValue,name=color,value=5'>
+													+
+												</button>
+											</div>
+										</div>
+									</div>
+									<div class='col-12 mb-3'>
+										<button class="btn btn-primary float-right" data-cave-click="avatarSetAllValues">Set Values</button>
+										<button class="btn btn-primary float-right mx-3" data-cave-click="getNewAvatar">Random</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class='col-12 col-md-4 p-2'>
+				<div class="row">
+					<div class="col-12 mb-3">
+						<div class="card jb-bg-smoke-7">
+							<h5 class="card-header text-light jb-bg-primary-7">Change Password</h5>
+							<div class="card-body">
+								<form id="changePasswordForm">
+									<div class="row">
+										<div class="col-6 col-md-12 col-xl-6 p-1">
+											<input class="form-control ds-input" name="newPassword" placeholder="enter new password..." autocomplete="off" spellcheck="false" type="password" required />
+										</div>
+										<div class='col-6 col-md-12 col-xl-6 ml-auto text-right p-1'>
+											<button class='btn btn-primary'>Submit</button>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+					<div class="col-12">
+						<div class="card jb-bg-smoke-7">
+							<h5 class="card-header text-light jb-bg-danger-7">Delete Account</h5>
+							<div class="card-body">
+								<button class="btn btn-danger float-right" data-cave-click="deleteAccount">Yes, delete my account!</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+<!-- /parts/scripts.html -->
+<script>
+
+    avatarDecodeID = function () {
+        let val = parseInt(CaveJSON.Session.Avatar);
+        CaveJSON.avatar = {};
+        CaveJSON.avatar.color = val & 0xff;
+        val >>= 8;
+        CaveJSON.avatar.nose = val & 0x1f;
+        val >>= 5;
+        CaveJSON.avatar.eyes = val & 0x1f;
+        val >>= 5;
+        CaveJSON.avatar.mouth = val & 0x1f;
+        val >>= 5;
+        CaveJSON.avatar.face = val & 0x1f;
+        val >>= 5;
+        CaveJSON.avatar.rotation = val & 0x0f;
+    };
+    avatarDecodeID();
+
+    avatarCreateID = function () {
+        let val = 0.0;
+        val += CaveJSON.avatar.rotation & 0x0f;
+        val *= 32;
+        val += CaveJSON.avatar.face & 0x1f;
+        val *= 32;
+        val += CaveJSON.avatar.mouth & 0x1f;
+        val *= 32;
+        val += CaveJSON.avatar.eyes & 0x1f;
+        val *= 32;
+        val += CaveJSON.avatar.nose & 0x1f;
+        val *= 256;
+        val += CaveJSON.avatar.color % 256.0;
+        return val;
+    };
+
+    jukeBob.avatarSetValue = function (data) {
+        if (data && data.params && data.params.value) CaveJSON.avatar[data.params.name] = data.params.value;
+        jukeBob.doAjax({
+            url: '/auth/account/avatar/new.json',
+            data: {
+                avatarID: avatarCreateID()
+            },
+            success: function (data) {
+                CaveJSON.parseNewData(data.CaveJSON);
+                avatarDecodeID();
+                jukeBob.fillTemplate('main');
+                jukeBob.fillTemplate('navigation');
+                jukeBob.onRenderDone();
+            }
+        });
+    };
+
+    jukeBob.avatarIncValue = function (data) {
+        if (!data.params.value) data.params.value = 1;
+        CaveJSON.avatar[data.params.name] += parseInt(data.params.value);
+        data.params.value = null;
+        jukeBob.avatarSetValue(data);
+    };
+
+    jukeBob.avatarDecValue = function (data) {
+        if (!data.params.value) data.params.value = 1;
+        CaveJSON.avatar[data.params.name] = Math.max(0, parseInt(CaveJSON.avatar[data.params.name]) - parseInt(data.params.value));
+        data.params.value = null;
+        jukeBob.avatarSetValue(data);
+    };
+
+    jukeBob.getNewAvatar = function () {
+        jukeBob.doAjax({
+            url: '/auth/account/avatar/new.json',
+            success: function (data) {
+                CaveJSON.parseNewData(data.CaveJSON);
+                avatarDecodeID();
+                jukeBob.fillTemplate('main');
+                jukeBob.fillTemplate('navigation');
+                jukeBob.onRenderDone();
+            }
+        })
+    };
+
+    jukeBob.avatarSetAllValues = function () {
+        CaveJSON.avatar.face = $('#avatarFace').val();
+        CaveJSON.avatar.eyes = $('#avatarEyes').val();
+        CaveJSON.avatar.nose = $('#avatarNose').val();
+        CaveJSON.avatar.mouth = $('#avatarMouth').val();
+        CaveJSON.avatar.rotation = $('#avatarRotation').val();
+        CaveJSON.avatar.color = $('#avatarColor').val();
+        L(CaveJSON.avatar.face);
+        jukeBob.avatarSetValue();
+    };
+
+    jukeBob.deleteAccount = function () {
+        jukeBob.doAjax({
+            url: '/mdb/user/account/delete.json',
+            type: 'POST',
+            success: function (data) {
+                CaveJSON.parseNewData(data.CaveJSON);
+                if (CaveJSON.resultOK) {
+                    window.location.href = '/';
+                } else {
+                    jukeBob.showError(CaveJSON.errorMsg, 'JukeBob')
+                }
+            }
+        });
+    };
+
+    jukeBob.onRenderDone = function () {
+        $(document).off('submit').on('submit', '#changePasswordForm', function (e) {
+            e.preventDefault();
+            const formData = jukeBob.formDataToObject($(this).serializeArray());
+//            L(formData);
+            jukeBob.doAjax({
+                url: '/mdb/user/account/password/update.json',
+                type: 'POST',
+                data: formData,
+                success: function (data) {
+                    CaveJSON.parseNewData(data.CaveJSON);
+                    jukeBob.fillTemplate('main');
+                    jukeBob.onRenderDone();
+                    jukeBob.showMessageBox({
+                        Title: 'Success',
+                        Text: 'your new password is now set.',
+                        Details: "",
+                        Primary: true
+                    });
+                },
+                error: function () {
+                    jukeBob.showMessageBox({
+                        Title: 'Error',
+                        Text: 'your new password could not be set.',
+                        Details: "",
+                        Danger: true
+                    });
+                }
+            });
+            return false;
+        });
+    };
+
+    jukeBob.renderPage(jukeBob.onRenderDone);
+
+</script>
+</body>
+
+</html>

@@ -1,0 +1,205 @@
+<div class="jb-footer-before"><!-- make space for footer --></div>
+<div class="jb-footer container-fluid text-light jb-primary-container">
+    <script data-cave-template="footer" type="text/x-handlebars-template">
+        <div class="row px-3">
+            <div class="col text-truncate nav-link">
+                {{#if isNotMainPage}}
+                {{#if NowPlaying}}
+                <span class="pr-3"><a class="text-white jb-alpha-5" href="/audiofiles?f={{NowPlaying.UrlTitle}}"><i
+                        class="fas fa-music"></i>&nbsp;{{NowPlaying.Title}}</a></span>
+                <span class="pr-3"><a class="text-white jb-alpha-5" href="/albums?a={{NowPlaying.Artist.ID}}"><i
+                        class="fas fa-user"></i>&nbsp;{{NowPlaying.ArtistName}}</a></span>
+                <span class="pr-3"><a class="text-white jb-alpha-5" href="/audiofiles?b={{NowPlaying.Album.ID}}"><i
+                        class="fas fa-circle"></i>&nbsp;{{NowPlaying.AlbumName}}</a></span>
+                {{/if}}
+                {{/if}}
+            </div>
+            <div class="col-auto nav-link">
+                <i class="text-white jb-alpha-5 fas fa-sm fa-question"></i>
+                <a href="/legal" class="text-white jb-alpha-5"><span
+                        class="d-none d-sm-inline"> legal terms</span></a>
+                +
+                <a href="/privacy" class="text-white jb-alpha-5"><span
+                        class="d-none d-sm-inline"> privacy</span></a>
+            </div>
+        </div>
+    </script>
+</div>
+<div id="jb-goToTopDiv"><i class="fas fa-4x fa-arrow-up"></i></div>
+<script data-cave-template="errorMsg" type="text/x-handlebars-template">
+    <div class="row"><div class="col"><h3>{{errorMsg}}</h3></div></div>
+</script>
+<script data-cave-template="caveMessageBox" type="text/x-handlebars-template">
+    <div id="caveMessageBox" class="modal jb-bg-smoke-5" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    {{#if MessageBox.Danger}}
+                    <h5 class="modal-title text-danger">{{MessageBox.Title}}</h5>
+                    {{else if MessageBox.Primary}}
+                    <h5 class="modal-title text-primary">{{MessageBox.Title}}</h5>
+                    {{else}}
+                    <h5 class="modal-title">{{MessageBox.Title}}</h5>
+                    {{/if}}
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+                </div>
+                {{#if MessageBox.Danger}}
+                    <div class="modal-body jb-bg-danger-5">
+                {{else if MessageBox.Primary}}
+                    <div class="modal-body jb-bg-primary-5">
+                {{else}}
+                    <div class="modal-body jb-bg-smoke-5">
+                {{/if}}
+                    <p>{{MessageBox.Text}}</p>
+                </div>
+                <div class="modal-footer">
+                    <p class="text-muted mr-auto">{{MessageBox.Details}}</p>
+                    {{#if MessageBox.Danger}}
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                    {{else if MessageBox.Primary}}
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    {{else}}
+                    <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- CaveJSON -->
+<!-- Optional JavaScript -->
+<script data-cave-template="cave-debug" type="text/x-handlebars-template">
+	<div class="container-fluid jb-bg-smoke-7 p-3">
+		<h3 class='text-light'>Debug: <span class='badge badge-light'>XS</span>
+		<span class="d-none d-sm-inline"> > <span class='badge badge-light'>SM</span></span>
+		<span class="d-none d-md-inline"> > <span class='badge badge-light'>MD</span></span>
+		<span class="d-none d-lg-inline"> > <span class='badge badge-light'>LG</span></span>
+		<span class="d-none d-xl-inline"> > <span class='badge badge-light'>XL</span></span>
+		</h3>
+
+        <div class="card bg-light jb-bg-light-5">
+            <div class="card-header jb-bg-light-4">
+                <h5>Cave-Debug <a href="/Explain" target="_blank">/Explain</a> <a href="/debug">/debug</a></h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">IDs (S/U): [{{Session.ID}}] [{{Session.UserID}}]</div>
+                    <div class="col">is Auth'd: {{Session.Authenticated}}</div>
+                    {{#if Session.Authenticated}}
+                    <div class="col">is Admin: {{Session.isAdmin}}</div>
+                    <div class="col">Nick: {{Session.NickName}}</div>
+                    <div class="col">Avatar: {{Session.Avatar}}</div>
+                    {{/if}}
+                </div>
+                <hr>
+                <div class="row">
+                    {{#each savedSessions}}
+                    <div class="col">
+                        <div class="btn btn-sm btn-secondary">
+                            <div class="d-inline" data-cave-click="dbgRestoreSession,i={{@index}}">{{this.NickName}}
+                            </div>
+                            <div class="d-inline ml-1" data-cave-click="dbgRemoveSession,i={{@index}}"><i
+                                    class="fas fa-trash fa-sm"></i></div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col">
+                        <div class="btn btn-sm btn-secondary" data-cave-click="dbgSaveSession">Save Session</div>
+                    </div>
+                    <div class="col">
+                        <div class="btn btn-sm btn-secondary" data-cave-click="dbgClearSession">Clear Session</div>
+                    </div>
+                    <div class="col">
+                        <div class="btn btn-sm btn-secondary" data-cave-click="dbgRemoveAllSessions">Remove all
+                            Sessions
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<!-- jQuery first, then Bootstrap JS -->
+<script src="/js/jquery-3.2.1.min.js"></script>
+<script src="/js/handlebars-v4.0.11.js"></script>
+<script src="/js/cavejson.js"></script>
+<script src="/js/inplaceedit.js"></script>
+<script src="/js/toastr.min.js"></script>
+<script src="/js/select2.full.min.js"></script>
+<script src="/js/jukebob.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script defer src="/js/fontawesome-all.min.js"></script>
+<script>
+
+    jukeBob.skipTitle = function () {
+        jukeBob.doAjaxMsg('/mdb/player/skip.json', {}, 'Title skipped!');
+    };
+
+    jukeBob.doLogout = function () {
+        jukeBob.doAjax({
+            url: '/auth/account/logout.json',
+            success: function () {
+                window.document.cookie = "Session=;path=/";
+                window.location.href = '/';
+            }
+        });
+    };
+
+	jukeBob.shutDown = function (data) {
+		if (CaveJSON.Session.isAdmin) {
+			jukeBob.doAjaxMsg('/host/shutdown.json', data.params, 'jukebob will shut down!');
+		}
+	};
+
+    /* DEBUG */
+    CaveJSON.savedSessions = JSON.parse(sessionStorage.getItem('dbgSaveSession'));
+
+    jukeBob.dbgSaveSession = function () {
+        if (!(CaveJSON.savedSessions instanceof Array)) {
+            CaveJSON.savedSessions = [];
+        }
+        CaveJSON.savedSessions.push({
+            ID: CaveJSON.Session.ID,
+            NickName: CaveJSON.Session.NickName
+        });
+        L(CaveJSON.savedSessions);
+        sessionStorage.setItem('dbgSaveSession', JSON.stringify(CaveJSON.savedSessions));
+        window.location.reload();
+    };
+
+    jukeBob.dbgRestoreSession = function (p) {
+        let session = CaveJSON.savedSessions[p.params.i];
+        L(session);
+        document.cookie = "Session=" + session.ID + ';path=/'
+        window.location.reload();
+    };
+
+    jukeBob.dbgClearSession = function (p) {
+        document.cookie = 'Session=;path=/'
+        window.location.reload();
+    };
+
+
+    jukeBob.dbgRemoveSession = function (p) {
+        let i = p.params.i;
+        if (CaveJSON.savedSessions && (i < CaveJSON.savedSessions.length)) {
+            CaveJSON.savedSessions.splice(i, 1);
+            L(CaveJSON.savedSessions);
+            sessionStorage.setItem('dbgSaveSession', JSON.stringify(CaveJSON.savedSessions));
+            window.location.reload();
+        }
+    };
+
+    jukeBob.dbgRemoveAllSessions = function (p) {
+        sessionStorage.removeItem('dbgSaveSession');
+        window.location.reload();
+    };
+
+</script>

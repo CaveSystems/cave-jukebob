@@ -1,0 +1,10 @@
+[CaveWebTemplate]
+Version = 1
+
+[Functions]
+/auth/session
+
+[Content]
+/parts/head.html
+/parts/navigation.html
+/parts/scripts.html

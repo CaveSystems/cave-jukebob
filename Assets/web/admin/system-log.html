@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- /parts/head.html -->
+    <title>JukeBob Admin Log</title>
+</head>
+
+<body>
+<!-- /parts/admin-nav.html -->
+<script data-cave-template="main" type="text/x-handlebars-template">
+    <div class="container-fluid" id="content">
+        <div class='row'>
+            <div class='col'>
+                <div class="card mt-3 jb-bg-primary-7">
+					<div class="card-header jb-bg-primary-7 text-light">
+						<div class="row">
+							<div class="col">
+								<h5>JukeBob Log</h5>
+							</div>
+							<div class="col-auto float-right btn-sm btn-dark">
+								<select id="select-level" name="loglevel">
+									<option value="verbose">Verbose</option>
+									<option value="debug">Debug</option>
+									<option value="information">Information</option>
+									<option value="notice">Notice</option>
+									<option value="warning">Warning</option>
+									<option value="error">Error</option>
+									<option value="critical">Critical</option>
+									<option value="alert">Alert</option>
+									<option value="emergency">Emergency</option>
+								</select>
+							</div>
+						</div>
+					</div>
+                    <div class="card-body jb-bg-light-5">
+                        {{#each Logs}}
+                        <div class="row jb-log-item {{{this.RowClass}}}">
+							<div class="col-12 col-md-2">{{this.DateTime}} {{{this.LevelString}}}</div>
+                            <div class="col-12 col-md-10">{{{this.Content}}}</div>
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<!-- /parts/scripts.html -->
+<script>
+
+    if (CaveJSON.Logs) {
+        for (let i = 0; i < CaveJSON.Logs.length; i++) {
+            CaveJSON.Logs[i].DateTime = new Date(CaveJSON.Logs[i].DateTime).toLocaleTimeString();
+            let level = CaveJSON.Logs[i].Level;
+            switch (level) {
+                case "Verbose":
+                    CaveJSON.Logs[i].LevelString = '<span class="badge badge-secondary">' + level + '</span>';
+                    break;
+                case "Debug":
+                    CaveJSON.Logs[i].LevelString = '<span class="badge badge-info">' + level + '</span>';
+                    break;
+                case "Information":
+                    CaveJSON.Logs[i].LevelString = '<span class="badge badge-primary">' + level + '</span>';
+                    break;
+                case "Notice":
+                    CaveJSON.Logs[i].RowClass = 'jb-log-item-notice';
+                    CaveJSON.Logs[i].LevelString = '<span class="badge badge-success">' + level + '</span>';
+                    break;
+                case "Warning":
+                    CaveJSON.Logs[i].RowClass = 'jb-log-item-warning';
+                    CaveJSON.Logs[i].LevelString = '<span class="badge badge-warning">' + level + '</span>';
+                    break;
+                case "Emergency":
+                case "Alert":
+                case "Critical":
+                case "Error":
+                    CaveJSON.Logs[i].RowClass = 'jb-log-item-danger';
+                    CaveJSON.Logs[i].LevelString = '<span class="badge badge-danger">' + level + '</span>';
+                    break;
+            }
+        }
+    }
+
+    jukeBob.onRenderDone = function () {
+        $("#select-level").select2().on('select2:select', function (e) {
+            L(e.params.data.id);
+            window.location = '/admin/system-log?l=' + e.params.data.id;
+        });
+
+        if (CaveJSON.Params && CaveJSON.Params.l)
+        {
+            $("#select-level").val(CaveJSON.Params.l).trigger('change');
+        }
+    };
+
+
+    jukeBob.renderPage(jukeBob.onRenderDone);
+</script>
+</body>
+
+</html>
