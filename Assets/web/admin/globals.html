@@ -17,6 +17,12 @@
 					<input type="hidden" name="streamID" value="{{StreamSettings.0.StreamID}}">
 					<div class="row mb-3">
 						<div class='col-12 col-sm-6 col-md-4 mb-2'>
+							<label for="streamTypeInput">Stream Type</label>
+							<input type="text" class="form-control" name="streamType" id="streamTypeInput"
+								   value="{{StreamSettings.0.StreamType}}">
+							<small class="form-text text-muted">stream type to play (silence / jukebox..)</small>
+						</div>
+						<div class='col-12 col-sm-6 col-md-4 mb-2'>
 							<label for="titlesPerUserInput">Titles per User</label>
 							<input type="text" class="form-control" name="titlesPerUser" id="titlesPerUserInput" value="{{StreamSettings.0.TitlesPerUser}}">
 							<small class="form-text text-muted">maximum Titles a user can wish at any time</small>
@@ -89,6 +95,9 @@
             L('Settings');
             e.preventDefault();
             const formData = jukeBob.formDataToObject($(this).serializeArray());
+            // crude fix
+            if(formData.streamType.toLowerCase() == "silence") { formData.streamType="0";}
+            if(formData.streamType.toLowerCase() == "jukebob") { formData.streamType="1";}
             L(formData);
             jukeBob.doAjax({
                 url: '/admin/stream/setting/set.json',
