@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net45;netstandard2.0</TargetFrameworks>
+		<Version>1.0.0-alpha-$(Configuration.ToLower())-1</Version>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)\JukeBox.xml</DocumentationFile>
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>JukeBob.snk</AssemblyOriginatorKeyFile>
+	</PropertyGroup>
+	<ItemGroup>
+	  <PackageReference Include="Cave.Data" Version="1.0.8" />
+	  <PackageReference Include="Cave.Extensions" Version="1.0.8-ci-20190505-2" />
+	  <PackageReference Include="Cave.FtpServer" Version="1.0.0" />
+	  <PackageReference Include="Cave.Logging" Version="1.0.4-ci-20190504-3" />
+	  <PackageReference Include="Cave.Media.Skia" Version="1.0.1" />
+	  <PackageReference Include="Cave.Net" Version="1.0.9" />
+	  <PackageReference Include="Cave.Progress" Version="1.0.3" />
+	  <PackageReference Include="Cave.Service" Version="1.0.3" />
+	  <PackageReference Include="Cave.WebServer" Version="1.0.5-ci-20190615-1" />
+	</ItemGroup>
+</Project>
